@@ -305,6 +305,7 @@ void CTextureProcessSystemApp::Check()
 		pDoc->calTexCorByIndex(faceIndex, 4);
 	}*/
 	pDoc->calTexCorByIndex(0, 4);
+	pDoc->calTexCorByIndex(2677, 4);
 }
 
 

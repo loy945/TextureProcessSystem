@@ -92,6 +92,8 @@ public:
 	//2015.5.10
 	vector<Point3fv3 *> texCoords;//纹理坐标数组，可以保存多组纹理坐标
 	Point3fv3 texCoord;//纹理坐标
+public:
+	void updateTexCoord();
 };
 
  typedef struct Templet//输入向量结构体

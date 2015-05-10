@@ -529,8 +529,8 @@ void CGLBaseView::DrawScene()
 	int counti=0;
 	for (vector<gl_face>::iterator it = m_pDoc->selectfaceLsit.begin(); it != m_pDoc->selectfaceLsit.end(); it ++)
 	{
-		if(!Triangle->at(counti).textureclick)
-		{
+		/*if(!Triangle->at(counti).textureclick)
+		{*/
 		glColor3f(0.25, 0.36, 0.85);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//Ìî³äÄ£Ê½
 		glBegin(GL_TRIANGLES);
@@ -547,7 +547,7 @@ void CGLBaseView::DrawScene()
 		m_pDoc->plyLoader.pointArry[it->ptnum[2]].z);
 	
 		glEnd();
-		}
+		/*}*/
 		counti++;
 	}
 

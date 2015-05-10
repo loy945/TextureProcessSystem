@@ -51,3 +51,4 @@ void Point3fv3::setValue(Point3fv3 & pt3fv3)
 	this->update = pt3fv3.update;
 
 }
+

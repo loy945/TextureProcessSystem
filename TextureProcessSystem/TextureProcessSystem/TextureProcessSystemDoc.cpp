@@ -142,7 +142,7 @@ void CTextureProcessSystemDoc::Serialize(CArchive& ar)
 #ifdef SHARED_HANDLERS
 
 // 缩略图的支持
-void CTextureProcessSystemDoc::OnDrawThumbnail(CDC& dc, LPRECT lprcBounds)
+void CTextureProcessSystemDoc::Thumbnail(CDC& dc, LPRECT lprcBounds)
 {
 	// 修改此代码以绘制文档数据
 	dc.FillSolidRect(lprcBounds, RGB(255, 255, 255));
@@ -1093,12 +1093,12 @@ void CTextureProcessSystemDoc::count_TexcoordByHuang(int a,int b,int c,int d,int
 	//Triangle->at(a)._2dv[b]=B;
 
 	//至此纹理已经算出来了
-	if(!Triangle->at(a).textureclick)
-	{
+	/*if(!Triangle->at(a).textureclick)
+	{*/
 		Triangle->at(a).textureclick=true;
 		count++;
-		Triangle->at(a).renderTime=times;
-	}
+	/*	Triangle->at(a).renderTime=times;
+	}*/
 	
 
 }
@@ -1359,21 +1359,14 @@ int  CTextureProcessSystemDoc::count_Texcoord(int d,int e1,int e2)
 		{
 			cout<<"2677->"<<a<<endl;
 		}*/
-		if(!Triangle->at(a).textureclick)
-		{
+		/*if(!Triangle->at(a).textureclick)
+		{*/
 			count++;
 			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 			count_TexcoordByHuang(a,b,c1,d,e1);//计算纹理
-			if (!Triangle->at(a).texCoord.update)
-			{
-				//更新纹理信息，压入队列
-				Point3fv3 * pt3fv3 = new Point3fv3();
-				pt3fv3->setValue(Triangle->at(a).texCoord);
-				Triangle->at(a).texCoords.push_back(pt3fv3);
-				Triangle->at(a).texCoord.update = true;
-			}
+			Triangle->at(a).updateTexCoord();
 
-		}
+		//}
 		res.pop_back();
 	}
 	return count;
@@ -1384,8 +1377,8 @@ int CTextureProcessSystemDoc::count_3FaceTexcoord(int d)
 	int k=0;//对k个面新加了纹理
 	//做计算的三角形面片必须已经纹理
 	vector<gl_face> * Triangle=&(plyLoader.faceArry);
-	if(!Triangle->at(d).textureclick)
-		return 0;
+	/*if(!Triangle->at(d).textureclick)
+		return 0;*/
 	//传进来三角形面片的信息，计算出3个邻接三角形的纹理坐标
 	bool res1=false,res2=false,res3=false;
 	k=count_Texcoord(d,0,1)+count_Texcoord(d,1,2)+count_Texcoord(d,2,0);
@@ -1404,11 +1397,11 @@ void CTextureProcessSystemDoc::count_h(int i)
 	vector<gl_point> * Vertex=&(plyLoader.pointArry);
 	vector<gl_point2d> * Vertex2d=&(plyLoader.point2DArry);
 
-	if(Triangle->at(i).isProcessedTexCor)
+	/*if(Triangle->at(i).isProcessedTexCor)
 		return;
 	if(Triangle->at(i).textureclick)
 		return;
-
+*/
 
 	if((Triangle->at(i).value==0)&&(Vertex2d->at(Triangle->at(i).ptnum_2d[0]).x==Vertex2d->at(Triangle->at(i).ptnum_2d[1]).x))
 	{
@@ -1581,31 +1574,22 @@ void CTextureProcessSystemDoc::count_h(int i)
 	}
 
 
-	if(!Triangle->at(i).textureclick)
+	if (!Triangle->at(i).textureclick||true)
 	{
-	Triangle->at(i).h=h;
-	Triangle->at(i).textureclick=true;
-	Triangle->at(i).is2DCordFixed=true;
-	count++;
-	//计算纹理
+		Triangle->at(i).h = h;
+		Triangle->at(i).textureclick = true;
+		Triangle->at(i).is2DCordFixed = true;
+		count++;
+		//计算纹理
 
-	centerIndex=i;
-	count_TexcoordByHuang(i,0,0,i,0);
-	count_TexcoordByHuang(i,1,0,i,0);
-	count_TexcoordByHuang(i,2,0,i,0);
-	Triangle->at(i).renderTime=times;
-	addIndextoProcesseTriangleIndex(i,i);
-	if (!Triangle->at(i).texCoord.update)
-	{
-		//更新纹理信息，压入队列
-		Point3fv3 * pt3fv3 = new Point3fv3();
-		pt3fv3->setValue(Triangle->at(i).texCoord);
-		Triangle->at(i).texCoords.push_back(pt3fv3);
-		Triangle->at(i).texCoord.update = true;
+		centerIndex = i;
+		count_TexcoordByHuang(i, 0, 0, i, 0);
+		count_TexcoordByHuang(i, 1, 0, i, 0);
+		count_TexcoordByHuang(i, 2, 0, i, 0);
+		Triangle->at(i).renderTime = times;
+		addIndextoProcesseTriangleIndex(i, i);
+		Triangle->at(i).updateTexCoord();
 	}
-	}
-
-	
 	//return h;
  }
 
@@ -1728,7 +1712,7 @@ void CTextureProcessSystemDoc::calTexCor()
 	{
 		int index=toProcesseTriangleIndex.at(0);
 		d=index;
-		if(!Triangle->at(index).isProcessedTexCor)
+		if(!Triangle->at(index).isProcessedTexCor||true)
 		{
 			
 			Triangle->at(index).isProcessedTexCor=true;
@@ -1738,7 +1722,7 @@ void CTextureProcessSystemDoc::calTexCor()
 			int index1=findFaceIndex(index,0,1);
 			int index2=findFaceIndex(index,1,2);
 			int index3=findFaceIndex(index,2,0);
-			if(!Triangle->at(index1).textureclick)
+			if(!Triangle->at(index1).textureclick||true)
 			{
 				if(addIndextoProcesseTriangleIndex(index,index1))
 				{
@@ -1751,9 +1735,10 @@ void CTextureProcessSystemDoc::calTexCor()
 				e2=1;
 				findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 				count_TexcoordByHuang(a,b,c1,d,e1);
+				Triangle->at(index1).updateTexCoord();
 				}
 			}
-			if(!Triangle->at(index2).textureclick)
+			if(!Triangle->at(index2).textureclick||true)
 			{
 				if(addIndextoProcesseTriangleIndex(index,index2))
 				{
@@ -1762,30 +1747,24 @@ void CTextureProcessSystemDoc::calTexCor()
 				e2=2;
 				findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 				count_TexcoordByHuang(a,b,c1,d,e1);
+				Triangle->at(index2).updateTexCoord();
 				}
 			}
 			if(!Triangle->at(index3).textureclick)
 			{
-				if(addIndextoProcesseTriangleIndex(index,index3))
+				if(addIndextoProcesseTriangleIndex(index,index3)||true)
 				{
 				a=index3;
 				e1=2;
 				e2=0;
 				findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 				count_TexcoordByHuang(a,b,c1,d,e1);
+				Triangle->at(index3).updateTexCoord();
 				}
 			}
 			//count_3FaceTexcoord(index);
 		}
 		deleteIndexfromProcesseTriangleIndex(index);
-		if (!Triangle->at(a).texCoord.update)
-		{
-			//更新纹理信息，压入队列
-			Point3fv3 * pt3fv3 = new Point3fv3();
-			pt3fv3->setValue(Triangle->at(a).texCoord);
-			Triangle->at(a).texCoords.push_back(pt3fv3);
-			Triangle->at(a).texCoord.update = true;
-		}
 	}
 }
 int CTextureProcessSystemDoc::findFaceIndex(int d,int e1,int e2)
@@ -1884,8 +1863,21 @@ vector<gl_face *> CTextureProcessSystemDoc::markConnectedFace(double centerLimit
 		gl_face * centerFace=&Triangle->at(userSelectingTriangleIndex);
 		gl_face * face=&Triangle->at(index);
 		//face->textureclick=true;
-		if(!face->textureclick)
+		/*if(!face->textureclick)*/
+		bool alreadyAddIn = false;
+		for (int w = 0; w < resfaces.size(); w++)
+		{
+			if (resfaces[w]->facenum == index)
+			{
+				alreadyAddIn = true;
+			}
+		}
+		if (!alreadyAddIn)
+		{
 			resfaces.push_back(&Triangle->at(index));
+		}
+
+			
 		gl_face * face1=&Triangle->at(index1);
 		gl_face * face2=&Triangle->at(index2);
 		gl_face * face3=&Triangle->at(index3);

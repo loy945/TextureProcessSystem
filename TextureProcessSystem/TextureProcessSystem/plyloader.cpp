@@ -310,7 +310,7 @@ void Model_PLY::Draw()
 		float v3y=pointArry[Triangle->at(i).ptnum[2]].y;
 		float v3z=pointArry[Triangle->at(i).ptnum[2]].z;
 
-		if(Triangle->at(i).textureclick==false)
+		if (Triangle->at(i).texCoords.size()==0)
 		{
 			if(v1x<-4e+8)
 				break;
@@ -338,11 +338,11 @@ void Model_PLY::Draw()
 	glBegin(GL_TRIANGLES );//显示
 	for(int i=0;i<faceArry.size();i++)
 	{	
-		if(Triangle->at(i).textureclick)
+		if (Triangle->at(i).texCoords.size()>0)
 			{
-				glColor3f(1,1,1);
-
-
+				glColor4f(1, 1, 1, 1 / Triangle->at(i).texCoords.size());
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				float v1x=pointArry[Triangle->at(i).ptnum[0]].x;
 				float v1y=pointArry[Triangle->at(i).ptnum[0]].y;
 				float v1z=pointArry[Triangle->at(i).ptnum[0]].z;
@@ -356,29 +356,30 @@ void Model_PLY::Draw()
 				float v3z=pointArry[Triangle->at(i).ptnum[2]].z;
 
 
-				for (int i = 0; i < Triangle->at(i).texCoords.size(); i++)
+				for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
 				{
-					glTexCoord2f(Triangle->at(i).texCoords[i]->cor[0][0], Triangle->at(i).texCoords[i]->cor[0][1]);
+					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
 					glVertex3f(v1x, v1y, v1z);
 
-					glTexCoord2f(Triangle->at(i).texCoords[i]->cor[1][0], Triangle->at(i).texCoords[i]->cor[1][1]);
+					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
 					glVertex3f(v2x, v2y, v2z);
 
-					glTexCoord2f(Triangle->at(i).texCoords[i]->cor[2][0], Triangle->at(i).texCoords[i]->cor[2][1]);
+					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
 					glVertex3f(v3x, v3y, v3z);
 				}
-		//		glTexCoord2f(Triangle->at(i)._2du[0],Triangle->at(i)._2dv[0]);
-		////		glTexCoord2f(-0.1,-0.25);
-		//		glVertex3f(v1x,v1y,v1z);
+				/*glTexCoord2f(Triangle->at(i).texCoord.cor[0][0], Triangle->at(i).texCoord.cor[0][1]);
+		//		glTexCoord2f(-0.1,-0.25);
+				glVertex3f(v1x,v1y,v1z);
 
-		//		glTexCoord2f(Triangle->at(i)._2du[1],Triangle->at(i)._2dv[1]);
-		//		//glTexCoord2f(0.0,1.0);
-		//		glVertex3f(v2x,v2y,v2z);
+				glTexCoord2f(Triangle->at(i).texCoord.cor[1][0], Triangle->at(i).texCoord.cor[1][1]);
+				//glTexCoord2f(0.0,1.0);
+				glVertex3f(v2x,v2y,v2z);
 
-		//		glTexCoord2f(Triangle->at(i)._2du[2],Triangle->at(i)._2dv[2]);
-		//		//glTexCoord2f(0.5,0.0);
-		//		glVertex3f(v3x,v3y,v3z);
-		//		}
+				glTexCoord2f(Triangle->at(i).texCoord.cor[2][0], Triangle->at(i).texCoord.cor[2][1]);
+				//glTexCoord2f(0.5,0.0);
+				glVertex3f(v3x,v3y,v3z);
+				*/
+				
 			}
 	}
 	glEnd();
@@ -386,4 +387,15 @@ void Model_PLY::Draw()
 	glDisable(GL_TEXTURE_2D);
 
 
+}
+void gl_face::updateTexCoord()
+{
+	if (!texCoord.update)
+	{
+		//更新纹理信息，压入队列
+		Point3fv3 * pt3fv3 = new Point3fv3();
+		pt3fv3->setValue(texCoord);
+		texCoords.push_back(pt3fv3);
+		texCoord.update = true;
+	}
 }

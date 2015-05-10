@@ -8,5 +8,6 @@ public:
 	bool is_valid(float cor[3][3]);
 	bool update;
 	void setValue(Point3fv3 & pt3fv3);
+	
 };
 
