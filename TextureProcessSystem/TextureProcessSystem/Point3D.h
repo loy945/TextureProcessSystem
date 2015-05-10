@@ -64,3 +64,33 @@ public:
 
 };
 
+class Point3D_3
+{
+public:
+	Point3D pt[3];
+	bool update;
+public:
+	Point3D_3();
+	bool is_valid(Point3D pt[3])
+	{
+		//bool texCor[3] = { true, true, true };//判断某一点纹理坐标是否有效
+		int texCorError=0; //3个点中无效的个数
+		for (int i = 0; i < 3; i++)
+		{
+			if ((pt[i].x>1 || pt[i].x<0) || (pt[i].y>1 || pt[i].y<0))
+			{
+				/*texCor[i] = false;*/
+				texCorError++;
+			}
+		}
+		if (texCorError >= 3)
+		{
+			//面片纹理坐标无效，不添加
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+};

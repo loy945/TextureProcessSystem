@@ -18,6 +18,8 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include "Point3D.h"
+#include "Point3fv3.h"
 using namespace std;
 
 class gl_point
@@ -71,12 +73,13 @@ public:
 	bool is2DCordFixed;
 	//12.4.6
 	bool isProcessedTexCor;
-	//2015.4.14
-	//三角面片3个点纹理坐标（u,v）
+	//展开后的2D坐标
 	float _2dx[3];
 	float _2dy[3];
-	float _2du[3];
-	float _2dv[3];
+	//2015.4.14
+	//三角面片3个点纹理坐标（u,v）
+	/*float _2du[3];
+	float _2dv[3];*/
 	//2015.4.15
 	float n[3];//法线
 	//2015.4.15
@@ -86,6 +89,9 @@ public:
 	int renderTime;
 	//3d模式是否显示颜色
 	bool isShowColorIn3D;
+	//2015.5.10
+	vector<Point3fv3 *> texCoords;//纹理坐标数组，可以保存多组纹理坐标
+	Point3fv3 texCoord;//纹理坐标
 };
 
  typedef struct Templet//输入向量结构体

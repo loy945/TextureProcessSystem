@@ -11,3 +11,10 @@ Point3D::Point3D(void)
 Point3D::~Point3D(void)
 {
 }
+Point3D_3::Point3D_3(void)
+{
+	update = true;//默认数据已压入vector
+	pt[0].x = -1;
+	pt[0].y = -1;
+	pt[0].z = -1;
+}

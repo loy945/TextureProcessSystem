@@ -356,20 +356,29 @@ void Model_PLY::Draw()
 				float v3z=pointArry[Triangle->at(i).ptnum[2]].z;
 
 
-				if(Triangle->at(i).renderTime==showPart-1||showPart==1)
+				for (int i = 0; i < Triangle->at(i).texCoords.size(); i++)
 				{
-				glTexCoord2f(Triangle->at(i)._2du[0],Triangle->at(i)._2dv[0]);
-		//		glTexCoord2f(-0.1,-0.25);
-				glVertex3f(v1x,v1y,v1z);
+					glTexCoord2f(Triangle->at(i).texCoords[i]->cor[0][0], Triangle->at(i).texCoords[i]->cor[0][1]);
+					glVertex3f(v1x, v1y, v1z);
 
-				glTexCoord2f(Triangle->at(i)._2du[1],Triangle->at(i)._2dv[1]);
-				//glTexCoord2f(0.0,1.0);
-				glVertex3f(v2x,v2y,v2z);
+					glTexCoord2f(Triangle->at(i).texCoords[i]->cor[1][0], Triangle->at(i).texCoords[i]->cor[1][1]);
+					glVertex3f(v2x, v2y, v2z);
 
-				glTexCoord2f(Triangle->at(i)._2du[2],Triangle->at(i)._2dv[2]);
-				//glTexCoord2f(0.5,0.0);
-				glVertex3f(v3x,v3y,v3z);
+					glTexCoord2f(Triangle->at(i).texCoords[i]->cor[2][0], Triangle->at(i).texCoords[i]->cor[2][1]);
+					glVertex3f(v3x, v3y, v3z);
 				}
+		//		glTexCoord2f(Triangle->at(i)._2du[0],Triangle->at(i)._2dv[0]);
+		////		glTexCoord2f(-0.1,-0.25);
+		//		glVertex3f(v1x,v1y,v1z);
+
+		//		glTexCoord2f(Triangle->at(i)._2du[1],Triangle->at(i)._2dv[1]);
+		//		//glTexCoord2f(0.0,1.0);
+		//		glVertex3f(v2x,v2y,v2z);
+
+		//		glTexCoord2f(Triangle->at(i)._2du[2],Triangle->at(i)._2dv[2]);
+		//		//glTexCoord2f(0.5,0.0);
+		//		glVertex3f(v3x,v3y,v3z);
+		//		}
 			}
 	}
 	glEnd();

@@ -297,14 +297,14 @@ void CTextureProcessSystemApp::Check()
 	AfxMessageBox(s1);
 	*/
 	//为每个基元贴图
-	FindTextureElementPosition *_ftep = pDoc->_ftep;
+	/*FindTextureElementPosition *_ftep = pDoc->_ftep;
 	TargetTexture * _targetTexture=_ftep->m_targetTexture;
 	for (int i = 0; i <_targetTexture->tes.size(); i++)
 	{
 		int faceIndex = _targetTexture->tes[i]->face->facenum;
 		pDoc->calTexCorByIndex(faceIndex, 4);
-	}
-
+	}*/
+	pDoc->calTexCorByIndex(0, 4);
 }
 
 

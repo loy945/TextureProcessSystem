@@ -1086,9 +1086,11 @@ void CTextureProcessSystemDoc::count_TexcoordByHuang(int a,int b,int c,int d,int
 
 
 
-
-	Triangle->at(a)._2du[b]=A;
-	Triangle->at(a)._2dv[b]=B;
+	Triangle->at(a).texCoord.cor[b][0] = A;
+	Triangle->at(a).texCoord.cor[b][1] = B;
+	Triangle->at(a).texCoord.update = false;
+	//Triangle->at(a)._2du[b]=A;
+	//Triangle->at(a)._2dv[b]=B;
 
 	//至此纹理已经算出来了
 	if(!Triangle->at(a).textureclick)
@@ -1318,13 +1320,15 @@ void CTextureProcessSystemDoc::findDiffrentPoint(int a,int d,int &b,int &c1,int 
 	b=3-c1-c2;
 
 	//把重合顶点纹理坐标赋值
-	Triangle->at(a)._2du[c1]=Triangle->at(d)._2du[e1];
-	Triangle->at(a)._2dv[c1]=Triangle->at(d)._2dv[e1];
-	Triangle->at(a)._2du[c2]=Triangle->at(d)._2du[e2];
-	Triangle->at(a)._2dv[c2]=Triangle->at(d)._2dv[e2];
-
-
-
+	//Triangle->at(a)._2du[c1]=Triangle->at(d)._2du[e1];
+	//Triangle->at(a)._2dv[c1]=Triangle->at(d)._2dv[e1];
+	//Triangle->at(a)._2du[c2]=Triangle->at(d)._2du[e2];
+	//Triangle->at(a)._2dv[c2]=Triangle->at(d)._2dv[e2];
+	Triangle->at(a).texCoord.cor[c1][0] = Triangle->at(d).texCoord.cor[e1][0];
+	Triangle->at(a).texCoord.cor[c1][1] = Triangle->at(d).texCoord.cor[e1][1];
+	Triangle->at(a).texCoord.cor[c2][0] = Triangle->at(d).texCoord.cor[e2][0];
+	Triangle->at(a).texCoord.cor[c2][1] = Triangle->at(d).texCoord.cor[e2][1];
+	Triangle->at(a).texCoord.update=false;
 	//把映射在2D上的三角形进行选择 修改未知点的2D坐标
 	alterFace2dCoord(a,d,b,c1,c2,e1,e2);
 	Triangle->at(a).is2DCordFixed=true;
@@ -1360,6 +1364,14 @@ int  CTextureProcessSystemDoc::count_Texcoord(int d,int e1,int e2)
 			count++;
 			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 			count_TexcoordByHuang(a,b,c1,d,e1);//计算纹理
+			if (!Triangle->at(a).texCoord.update)
+			{
+				//更新纹理信息，压入队列
+				Point3fv3 * pt3fv3 = new Point3fv3();
+				pt3fv3->setValue(Triangle->at(a).texCoord);
+				Triangle->at(a).texCoords.push_back(pt3fv3);
+				Triangle->at(a).texCoord.update = true;
+			}
 
 		}
 		res.pop_back();
@@ -1583,8 +1595,17 @@ void CTextureProcessSystemDoc::count_h(int i)
 	count_TexcoordByHuang(i,2,0,i,0);
 	Triangle->at(i).renderTime=times;
 	addIndextoProcesseTriangleIndex(i,i);
+	if (!Triangle->at(i).texCoord.update)
+	{
+		//更新纹理信息，压入队列
+		Point3fv3 * pt3fv3 = new Point3fv3();
+		pt3fv3->setValue(Triangle->at(i).texCoord);
+		Triangle->at(i).texCoords.push_back(pt3fv3);
+		Triangle->at(i).texCoord.update = true;
+	}
 	}
 
+	
 	//return h;
  }
 
@@ -1666,13 +1687,14 @@ void CTextureProcessSystemDoc::resetOuterTriangleTex()
 			count=0;
 			for(int j=0;j<3;j++)
 			{
-				auto vx=Triangle->at(i)._2du[j];
-				auto vy=Triangle->at(i)._2dv[j];
+				auto vx=Triangle->at(i).texCoord.cor[j][0];
+				auto vy=Triangle->at(i).texCoord.cor[j][1];
 				if(vx>1||vx<0||vy>1||vy<0)
 				{
 					count++;
 				}
 			}
+			
 			if(count>2)
 			{
 				//超过判断条件 不贴图 下次重新贴这些三角形
@@ -1680,10 +1702,11 @@ void CTextureProcessSystemDoc::resetOuterTriangleTex()
 				Triangle->at(i).is2DCordFixed=false;
 				for(int j=0;j<3;j++)
 				{
-					Triangle->at(i)._2du[j]=-1;
-					Triangle->at(i)._2dv[j]=-1;
+					Triangle->at(i).texCoord.cor[j][0] = -1;
+					Triangle->at(i).texCoord.cor[j][1] = -1;
 				}
 			}
+
 		}
 		/*else
 		{
@@ -1755,7 +1778,14 @@ void CTextureProcessSystemDoc::calTexCor()
 			//count_3FaceTexcoord(index);
 		}
 		deleteIndexfromProcesseTriangleIndex(index);
-		
+		if (!Triangle->at(a).texCoord.update)
+		{
+			//更新纹理信息，压入队列
+			Point3fv3 * pt3fv3 = new Point3fv3();
+			pt3fv3->setValue(Triangle->at(a).texCoord);
+			Triangle->at(a).texCoords.push_back(pt3fv3);
+			Triangle->at(a).texCoord.update = true;
+		}
 	}
 }
 int CTextureProcessSystemDoc::findFaceIndex(int d,int e1,int e2)
