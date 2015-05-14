@@ -58,7 +58,11 @@ public:
 	//2015.4.6
 	void calTexCor();
 	int findFaceIndex(int d,int e1,int e2);
-	vector<int> toProcesseTriangleIndex;
+	vector<int> toProcesseTriangleIndex;	//保存需要处理的三角形序号
+	//2015.5.14
+	vector<int> pocessedTriangleIndex; //保存已处理的三角形序号
+	bool ispocessed(int index);
+	//
 	int calTexCorTimes;//绘制纹理遍历次数
 	bool addIndextoProcesseTriangleIndex(int pareIndex,int index);
 	void deleteIndexfromProcesseTriangleIndex(int index);

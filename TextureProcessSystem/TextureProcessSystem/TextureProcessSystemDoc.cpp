@@ -1028,7 +1028,6 @@ void CTextureProcessSystemDoc::crosspoint2(float a,float *b,float *c)
 }
 void CTextureProcessSystemDoc::count_TexcoordByHuang(int a,int b,int c,int d,int e)
 {
-
 	//保证输入有效性
 	if(a<0||b<0||c<0||d<0||e<0)
 	{
@@ -1714,62 +1713,51 @@ void CTextureProcessSystemDoc::calTexCor()
 	{
 		int index=toProcesseTriangleIndex.at(0);
 		d=index;
-		//if(!Triangle->at(index).isProcessedTexCor||true)
-		//{
+		Triangle->at(index).r=(rand()%100)/100.0;
+		Triangle->at(index).g=(rand()%100)/100.0;
+		Triangle->at(index).b=(rand()%100)/100.0;
+		int index1=findFaceIndex(index,0,1);
+		int index2=findFaceIndex(index,1,2);
+		int index3=findFaceIndex(index,2,0);
+		if(addIndextoProcesseTriangleIndex(index,index1))
+		{
+			//a和d是输入的三角形,a未知d已知
+			//未知三角形a中，未知的点是b
+			//a中点c1和d中的点e1重合
+			//a中点c2和d中的点e2重合
+			a=index1;
+			e1=0;
+			e2=1;
+			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
+			count_TexcoordByHuang(a,b,c1,d,e1);
+			Triangle->at(a).texCoord.update = false;
+			Triangle->at(a).updateTexCoord();
+		}
+
+		if(addIndextoProcesseTriangleIndex(index,index2))
+		{
+			a=index2;
+			e1=1;
+			e2=2;
+			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
+			count_TexcoordByHuang(a,b,c1,d,e1);
+			Triangle->at(a).texCoord.update = false;
+			Triangle->at(a).updateTexCoord();
+		}
+
+		if(addIndextoProcesseTriangleIndex(index,index3))
+		{
+			a=index3;
+			e1=2;
+			e2=0;
+			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
+			count_TexcoordByHuang(a,b,c1,d,e1);
+			Triangle->at(a).texCoord.update = false;
+			Triangle->at(a).updateTexCoord();
+		}
 			
-			Triangle->at(index).isProcessedTexCor=true;
-			Triangle->at(index).r=(rand()%100)/100.0;
-			Triangle->at(index).g=(rand()%100)/100.0;
-			Triangle->at(index).b=(rand()%100)/100.0;
-			int index1=findFaceIndex(index,0,1);
-			int index2=findFaceIndex(index,1,2);
-			int index3=findFaceIndex(index,2,0);
-			//if(!Triangle->at(index1).textureclick||true)
-			//{
-				if(addIndextoProcesseTriangleIndex(index,index1))
-				{
-				//a和d是输入的三角形,a未知d已知
-				//未知三角形a中，未知的点是b
-				//a中点c1和d中的点e1重合
-				//a中点c2和d中的点e2重合
-				a=index1;
-				e1=0;
-				e2=1;
-				findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
-				count_TexcoordByHuang(a,b,c1,d,e1);
-				Triangle->at(a).texCoord.update = false;
-				Triangle->at(a).updateTexCoord();
-				}
-			//}
-			//if(!Triangle->at(index2).textureclick||true)
-			//{
-				if(addIndextoProcesseTriangleIndex(index,index2))
-				{
-				a=index2;
-				e1=1;
-				e2=2;
-				findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
-				count_TexcoordByHuang(a,b,c1,d,e1);
-				Triangle->at(a).texCoord.update = false;
-				Triangle->at(a).updateTexCoord();
-				}
-			//}
-			//if(!Triangle->at(index3).textureclick)
-			//{
-				if(addIndextoProcesseTriangleIndex(index,index3)||true)
-				{
-				a=index3;
-				e1=2;
-				e2=0;
-				findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
-				count_TexcoordByHuang(a,b,c1,d,e1);
-				Triangle->at(a).texCoord.update = false;
-				Triangle->at(a).updateTexCoord();
-				}
-			//}
-			//count_3FaceTexcoord(index);
-		//}
 		deleteIndexfromProcesseTriangleIndex(index);
+		pocessedTriangleIndex.push_back(index);
 	}
 }
 int CTextureProcessSystemDoc::findFaceIndex(int d,int e1,int e2)
@@ -1782,12 +1770,15 @@ int CTextureProcessSystemDoc::findFaceIndex(int d,int e1,int e2)
 }
 bool CTextureProcessSystemDoc::addIndextoProcesseTriangleIndex(int pareIndex,int index)
 {
-	if(index==centerIndex)
+
+	//如果已经处理过了 则不再处理
+	for (int i = 0; i < pocessedTriangleIndex.size(); i++)
 	{
-		toProcesseTriangleIndex.push_back(index);
-		return true;
+		if (pocessedTriangleIndex[i] == index)
+		{
+			return false;
+		}
 	}
-	
 	
 	for(int i=0;i<toProcesseTriangleIndex.size();i++)
 	{
@@ -1824,6 +1815,7 @@ void CTextureProcessSystemDoc::calTexCorByIndex(int processedindex,int steps)
 {
 	times++;
 	toProcesseTriangleIndex.clear();
+	pocessedTriangleIndex.clear();
 	count_h(processedindex);
 	r=(rand()%256)/256.0;
 	g=(rand()%256)/256.0;
@@ -1937,4 +1929,15 @@ double CTextureProcessSystemDoc::getNorError(float * n1,float * n2)
 	double n2_len=n2[0]*n2[0]+n2[1]*n2[1]+n2[2]*n2[2];
 	double cos=n1_n2/(sqrtf(n1_len)*sqrtf(n2_len));
 	return cos;
+}
+bool CTextureProcessSystemDoc::ispocessed(int index)
+{
+	/*for (int i = 0; i < pocessedTriangleIndex.size(); i++)
+	{
+		if (pocessedTriangleIndex[i] == index)
+		{
+			return true;
+		}
+	}*/
+	return false;
 }
