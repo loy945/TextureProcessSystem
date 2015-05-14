@@ -1088,14 +1088,13 @@ void CTextureProcessSystemDoc::count_TexcoordByHuang(int a,int b,int c,int d,int
 
 	Triangle->at(a).texCoord.cor[b][0] = A;
 	Triangle->at(a).texCoord.cor[b][1] = B;
-	Triangle->at(a).texCoord.update = false;
 	//Triangle->at(a)._2du[b]=A;
 	//Triangle->at(a)._2dv[b]=B;
 
 	//至此纹理已经算出来了
 	/*if(!Triangle->at(a).textureclick)
 	{*/
-		Triangle->at(a).textureclick=true;
+		//Triangle->at(a).textureclick=true;
 		count++;
 	/*	Triangle->at(a).renderTime=times;
 	}*/
@@ -1328,7 +1327,6 @@ void CTextureProcessSystemDoc::findDiffrentPoint(int a,int d,int &b,int &c1,int 
 	Triangle->at(a).texCoord.cor[c1][1] = Triangle->at(d).texCoord.cor[e1][1];
 	Triangle->at(a).texCoord.cor[c2][0] = Triangle->at(d).texCoord.cor[e2][0];
 	Triangle->at(a).texCoord.cor[c2][1] = Triangle->at(d).texCoord.cor[e2][1];
-	Triangle->at(a).texCoord.update=false;
 	//把映射在2D上的三角形进行选择 修改未知点的2D坐标
 	alterFace2dCoord(a,d,b,c1,c2,e1,e2);
 	Triangle->at(a).is2DCordFixed=true;
@@ -1364,6 +1362,7 @@ int  CTextureProcessSystemDoc::count_Texcoord(int d,int e1,int e2)
 			count++;
 			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 			count_TexcoordByHuang(a,b,c1,d,e1);//计算纹理
+			Triangle->at(a).texCoord.update = false;
 			Triangle->at(a).updateTexCoord();
 
 		//}
@@ -1574,10 +1573,10 @@ void CTextureProcessSystemDoc::count_h(int i)
 	}
 
 
-	if (!Triangle->at(i).textureclick||true)
-	{
+	/*if (!Triangle->at(i).textureclick||true)
+	{*/
 		Triangle->at(i).h = h;
-		Triangle->at(i).textureclick = true;
+		//Triangle->at(i).textureclick = true;
 		Triangle->at(i).is2DCordFixed = true;
 		count++;
 		//计算纹理
@@ -1588,8 +1587,10 @@ void CTextureProcessSystemDoc::count_h(int i)
 		count_TexcoordByHuang(i, 2, 0, i, 0);
 		Triangle->at(i).renderTime = times;
 		addIndextoProcesseTriangleIndex(i, i);
+		//添加center面片的纹理坐标
+		Triangle->at(i).texCoord.update = false;
 		Triangle->at(i).updateTexCoord();
-	}
+	//}
 	//return h;
  }
 
@@ -1654,6 +1655,7 @@ int CTextureProcessSystemDoc::findFaceByTwoPoint(int point1,int point2,int oldFa
 
 void CTextureProcessSystemDoc::resetOuterTriangleTex()
 {
+	return;
 	vector<gl_face> * Triangle=&(plyLoader.faceArry);
 	vector<gl_point> * Vertex=&(plyLoader.pointArry);
 	vector<gl_point2d> * Vertex2d=&(plyLoader.point2DArry);
@@ -1666,8 +1668,8 @@ void CTextureProcessSystemDoc::resetOuterTriangleTex()
 			Vertex2d->at(Triangle->at(i).ptnum_2d[j]).y=Triangle->at(i)._2dy[j];
 		}
 	/*	Triangle->at(i).isProcessedTexCor=false;*/
-		if(Triangle->at(i).isProcessedTexCor||Triangle->at(i).textureclick)
-		{
+		/*if(Triangle->at(i).isProcessedTexCor||Triangle->at(i).textureclick)
+		{*/
 			count=0;
 			for(int j=0;j<3;j++)
 			{
@@ -1691,7 +1693,7 @@ void CTextureProcessSystemDoc::resetOuterTriangleTex()
 				}
 			}
 
-		}
+		//}
 		/*else
 		{
 			Triangle->at(i).textureclick=false;
@@ -1712,8 +1714,8 @@ void CTextureProcessSystemDoc::calTexCor()
 	{
 		int index=toProcesseTriangleIndex.at(0);
 		d=index;
-		if(!Triangle->at(index).isProcessedTexCor||true)
-		{
+		//if(!Triangle->at(index).isProcessedTexCor||true)
+		//{
 			
 			Triangle->at(index).isProcessedTexCor=true;
 			Triangle->at(index).r=(rand()%100)/100.0;
@@ -1722,8 +1724,8 @@ void CTextureProcessSystemDoc::calTexCor()
 			int index1=findFaceIndex(index,0,1);
 			int index2=findFaceIndex(index,1,2);
 			int index3=findFaceIndex(index,2,0);
-			if(!Triangle->at(index1).textureclick||true)
-			{
+			//if(!Triangle->at(index1).textureclick||true)
+			//{
 				if(addIndextoProcesseTriangleIndex(index,index1))
 				{
 				//a和d是输入的三角形,a未知d已知
@@ -1735,11 +1737,12 @@ void CTextureProcessSystemDoc::calTexCor()
 				e2=1;
 				findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 				count_TexcoordByHuang(a,b,c1,d,e1);
-				Triangle->at(index1).updateTexCoord();
+				Triangle->at(a).texCoord.update = false;
+				Triangle->at(a).updateTexCoord();
 				}
-			}
-			if(!Triangle->at(index2).textureclick||true)
-			{
+			//}
+			//if(!Triangle->at(index2).textureclick||true)
+			//{
 				if(addIndextoProcesseTriangleIndex(index,index2))
 				{
 				a=index2;
@@ -1747,11 +1750,12 @@ void CTextureProcessSystemDoc::calTexCor()
 				e2=2;
 				findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 				count_TexcoordByHuang(a,b,c1,d,e1);
-				Triangle->at(index2).updateTexCoord();
+				Triangle->at(a).texCoord.update = false;
+				Triangle->at(a).updateTexCoord();
 				}
-			}
-			if(!Triangle->at(index3).textureclick)
-			{
+			//}
+			//if(!Triangle->at(index3).textureclick)
+			//{
 				if(addIndextoProcesseTriangleIndex(index,index3)||true)
 				{
 				a=index3;
@@ -1759,11 +1763,12 @@ void CTextureProcessSystemDoc::calTexCor()
 				e2=0;
 				findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 				count_TexcoordByHuang(a,b,c1,d,e1);
-				Triangle->at(index3).updateTexCoord();
+				Triangle->at(a).texCoord.update = false;
+				Triangle->at(a).updateTexCoord();
 				}
-			}
+			//}
 			//count_3FaceTexcoord(index);
-		}
+		//}
 		deleteIndexfromProcesseTriangleIndex(index);
 	}
 }

@@ -338,7 +338,7 @@ void Model_PLY::Draw()
 	glBegin(GL_TRIANGLES );//œ‘ æ
 	for(int i=0;i<faceArry.size();i++)
 	{	
-		if (Triangle->at(i).texCoords.size()>0)
+		if (Triangle->at(i).texCoords.size()>1)
 			{
 				glColor4f(1, 1, 1, 1 / Triangle->at(i).texCoords.size());
 				glEnable(GL_BLEND);
@@ -356,7 +356,8 @@ void Model_PLY::Draw()
 				float v3z=pointArry[Triangle->at(i).ptnum[2]].z;
 
 
-				for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
+				//for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
+				int j = 1;
 				{
 					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
 					glVertex3f(v1x, v1y, v1z);
