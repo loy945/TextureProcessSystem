@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "plyloader.h"
 #include "var.h"
+#include "plyloader.h"
+
 Model_PLY::Model_PLY()
 {
 	Faces_Triangles = NULL;
@@ -333,16 +334,15 @@ void Model_PLY::Draw()
 
 
 	glEnable(GL_TEXTURE_2D);
-	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
+	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glBegin(GL_TRIANGLES );//œ‘ æ
 	for(int i=0;i<faceArry.size();i++)
 	{	
-		if (Triangle->at(i).texCoords.size()>1)
+		if (Triangle->at(i).texCoords.size()>0)
 			{
-				glColor4f(1, 1, 1, 1 / Triangle->at(i).texCoords.size());
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				glColor4f(1, 1, 1, 1);
+
 				float v1x=pointArry[Triangle->at(i).ptnum[0]].x;
 				float v1y=pointArry[Triangle->at(i).ptnum[0]].y;
 				float v1z=pointArry[Triangle->at(i).ptnum[0]].z;
@@ -355,32 +355,20 @@ void Model_PLY::Draw()
 				float v3y=pointArry[Triangle->at(i).ptnum[2]].y;
 				float v3z=pointArry[Triangle->at(i).ptnum[2]].z;
 
-
-				//for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
-				int j = 1;
-				{
-					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
-					glVertex3f(v1x, v1y, v1z);
-
-					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
-					glVertex3f(v2x, v2y, v2z);
-
-					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
-					glVertex3f(v3x, v3y, v3z);
-				}
-				/*glTexCoord2f(Triangle->at(i).texCoord.cor[0][0], Triangle->at(i).texCoord.cor[0][1]);
-		//		glTexCoord2f(-0.1,-0.25);
-				glVertex3f(v1x,v1y,v1z);
-
-				glTexCoord2f(Triangle->at(i).texCoord.cor[1][0], Triangle->at(i).texCoord.cor[1][1]);
-				//glTexCoord2f(0.0,1.0);
-				glVertex3f(v2x,v2y,v2z);
-
-				glTexCoord2f(Triangle->at(i).texCoord.cor[2][0], Triangle->at(i).texCoord.cor[2][1]);
-				//glTexCoord2f(0.5,0.0);
-				glVertex3f(v3x,v3y,v3z);
-				*/
 				
+				for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
+				{
+					glMultiTexCoord2f(texName, Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
+				
+				glVertex3f(v1x, v1y, v1z);
+			
+					glMultiTexCoord2f(texName, Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
+					
+				glVertex3f(v2x, v2y, v2z);
+			
+					glMultiTexCoord2f(texName, Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
+				}
+				glVertex3f(v3x, v3y, v3z);		
 			}
 	}
 	glEnd();
