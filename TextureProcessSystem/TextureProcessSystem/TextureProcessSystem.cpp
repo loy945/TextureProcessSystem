@@ -277,17 +277,17 @@ void CTextureProcessSystemApp::Check()
 	//pDoc->calTexCorByIndex(0,1000);
 	//times++;
 	int it=0;
-	/*while(it<pDoc->userSelectTriangleIndex.size())
+	while(it<pDoc->userSelectTriangleIndex.size())
 	{
 
 		int index=pDoc->userSelectTriangleIndex.at(it);
 
-		pDoc->calTexCorByIndex(index,pDoc->_steps);
+		pDoc->calTexCorByIndex(index,4);
 		times++;
-		CString s1;
+		/*CString s1;
 		s1.Format("新添加:  %d,times: %d",pDoc->count-lastCount,times);
 		lastCount=pDoc->count;
-		AfxMessageBox(s1);
+		AfxMessageBox(s1);*/
 
 		it++;
 	}
@@ -295,17 +295,15 @@ void CTextureProcessSystemApp::Check()
 	CString s1;
 	s1.Format("processed Nums:  %d",pDoc->count);
 	AfxMessageBox(s1);
-	*/
+	
 	//为每个基元贴图
-	/*FindTextureElementPosition *_ftep = pDoc->_ftep;
-	TargetTexture * _targetTexture=_ftep->m_targetTexture;
-	for (int i = 0; i <_targetTexture->tes.size(); i++)
+	
+	/*for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
-		int faceIndex = _targetTexture->tes[i]->face->facenum;
-		pDoc->calTexCorByIndex(faceIndex, 4);
+		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
 	}*/
-	pDoc->calTexCorByIndex(0, 4);
-	pDoc->calTexCorByIndex(2677, 4);
+	//pDoc->calTexCorByIndex(0, 4);
+	//pDoc->calTexCorByIndex(2677, 4);
 }
 
 

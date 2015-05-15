@@ -358,17 +358,18 @@ void Model_PLY::Draw()
 				
 				for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
 				{
-					glMultiTexCoord2f(texName, Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
+					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
 				
 				glVertex3f(v1x, v1y, v1z);
 			
-					glMultiTexCoord2f(texName, Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
+					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
 					
 				glVertex3f(v2x, v2y, v2z);
 			
-					glMultiTexCoord2f(texName, Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
-				}
-				glVertex3f(v3x, v3y, v3z);		
+					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
+				
+				glVertex3f(v3x, v3y, v3z);	
+				}	
 			}
 	}
 	glEnd();
