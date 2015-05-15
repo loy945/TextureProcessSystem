@@ -332,7 +332,7 @@ void Model_PLY::Draw()
 	}
 	glEnd();
 
-
+	glActiveTextureARB(GL_TEXTURE1_ARB);
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -358,17 +358,17 @@ void Model_PLY::Draw()
 				
 				for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
 				{
-					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
+					glMultiTexCoord2f(texName,Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
 				
-				glVertex3f(v1x, v1y, v1z);
+					glVertex3f(v1x, v1y, v1z);
 			
-					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
+					glMultiTexCoord2f(texName,Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
 					
-				glVertex3f(v2x, v2y, v2z);
+					glVertex3f(v2x, v2y, v2z);
 			
-					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
+					glMultiTexCoord2f(texName,Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
 				
-				glVertex3f(v3x, v3y, v3z);	
+					glVertex3f(v3x, v3y, v3z);	
 				}	
 			}
 	}

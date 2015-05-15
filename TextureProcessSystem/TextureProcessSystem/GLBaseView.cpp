@@ -419,7 +419,7 @@ void CGLBaseView::InitialOpenGL()
 	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 
 	//LoadGLTextures();
-	
+
 
 }
 

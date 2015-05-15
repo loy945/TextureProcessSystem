@@ -276,7 +276,7 @@ void CTextureProcessSystemApp::Check()
 	double minCos=1;
 	//pDoc->calTexCorByIndex(0,1000);
 	//times++;
-	int it=0;
+	/*int it=0;
 	while(it<pDoc->userSelectTriangleIndex.size())
 	{
 
@@ -284,10 +284,10 @@ void CTextureProcessSystemApp::Check()
 
 		pDoc->calTexCorByIndex(index,4);
 		times++;
-		/*CString s1;
+		CString s1;
 		s1.Format("新添加:  %d,times: %d",pDoc->count-lastCount,times);
 		lastCount=pDoc->count;
-		AfxMessageBox(s1);*/
+		AfxMessageBox(s1);
 
 		it++;
 	}
@@ -295,15 +295,15 @@ void CTextureProcessSystemApp::Check()
 	CString s1;
 	s1.Format("processed Nums:  %d",pDoc->count);
 	AfxMessageBox(s1);
-	
+	*/
 	//为每个基元贴图
 	
 	/*for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
 		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
 	}*/
-	//pDoc->calTexCorByIndex(0, 4);
-	//pDoc->calTexCorByIndex(2677, 4);
+	pDoc->calTexCorByIndex(0, 4);
+	pDoc->calTexCorByIndex(2677, 4);
 }
 
 
