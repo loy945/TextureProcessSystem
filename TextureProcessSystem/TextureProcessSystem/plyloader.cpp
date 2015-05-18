@@ -356,9 +356,8 @@ void Model_PLY::Draw()
 				float v3z=pointArry[Triangle->at(i).ptnum[2]].z;
 
 				
-				for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
+				/*for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
 				{
-<<<<<<< HEAD
 					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
 
 					glVertex3f(v1x, v1y, v1z);
@@ -370,8 +369,7 @@ void Model_PLY::Draw()
 					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
 
 					glVertex3f(v3x, v3y, v3z);
-				}
-=======
+				}*/
 					glMultiTexCoord2f(texName,Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
 				
 					glVertex3f(v1x, v1y, v1z);
@@ -384,7 +382,6 @@ void Model_PLY::Draw()
 				
 					glVertex3f(v3x, v3y, v3z);	
 				}	
->>>>>>> origin/master
 			}
 	}
 	glEnd();
