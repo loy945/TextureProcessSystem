@@ -134,7 +134,30 @@ BOOL CTextureProcessSystemApp::InitInstance()
 	m_pMainWnd->SetWindowText("纹理处理系统");
 	m_pMainWnd->UpdateWindow();
 
+	//check multitexture support
+	glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
+	if (glActiveTextureARB == NULL)
+	{
+		return false;
+	}
 
+	const GLubyte *version = glGetString(GL_VERSION);
+	//如果你检测到的版本号不小于1.3.0，则可以写以下程序
+	PFNGLACTIVETEXTUREPROC glActiveTexture = (PFNGLACTIVETEXTUREPROC)wglGetProcAddress("glActiveTexture");
+	if (glActiveTexture == NULL)
+	{
+		//出错处理
+		return false;
+	}
+	/*http://bbs.csdn.net/topics/380252820
+	http://bbs.csdn.net/topics/380252820
+	http://www.68idc.cn/help/buildlang/ask/20150209215034.html
+	http://zhidao.baidu.com/link?url=a1CKRpMQkAeVQASafAOupwSc2btECELA2ZCFfkIDod3BHBwnzb0RRwiCYW9SG1t1_zkJFoI3xBBQjks3dFd1uK
+	http://blog.csdn.net/zckloveczy/article/details/4311725
+	http://blog.sina.com.cn/s/blog_685b5b220100v0md.html
+	*/
+
+	
 	return TRUE;
 }
 
@@ -276,13 +299,13 @@ void CTextureProcessSystemApp::Check()
 	double minCos=1;
 	//pDoc->calTexCorByIndex(0,1000);
 	//times++;
-	int it=0;
-	/*while(it<pDoc->userSelectTriangleIndex.size())
+	/*int it=0;
+	while(it<pDoc->userSelectTriangleIndex.size())
 	{
 
 		int index=pDoc->userSelectTriangleIndex.at(it);
 
-		pDoc->calTexCorByIndex(index,pDoc->_steps);
+		pDoc->calTexCorByIndex(index,4);
 		times++;
 		CString s1;
 		s1.Format("新添加:  %d,times: %d",pDoc->count-lastCount,times);
@@ -297,12 +320,10 @@ void CTextureProcessSystemApp::Check()
 	AfxMessageBox(s1);
 	*/
 	//为每个基元贴图
-	/*FindTextureElementPosition *_ftep = pDoc->_ftep;
-	TargetTexture * _targetTexture=_ftep->m_targetTexture;
-	for (int i = 0; i <_targetTexture->tes.size(); i++)
+	
+	/*for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
-		int faceIndex = _targetTexture->tes[i]->face->facenum;
-		pDoc->calTexCorByIndex(faceIndex, 4);
+		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
 	}*/
 	pDoc->calTexCorByIndex(0, 4);
 	pDoc->calTexCorByIndex(2677, 4);
