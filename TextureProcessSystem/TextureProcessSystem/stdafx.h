@@ -33,27 +33,16 @@
 
 #include <afxcontrolbars.h>     // 功能区和控件条的 MFC 支持
 
-//#include <gl/glew.h>
-#include <gl\gl.h>				 
-#include <gl\glu.h>
-#include <gl\glaux.h>
-#include <gl\glext.h>
-
+#include <gl/glew.h>
 #include <gl/freeglut.h>
 #include <vector>
 #include <string>
 #include <math.h>
-#pragma comment(lib, "opengl32.lib")		
-#pragma comment(lib, "glu32.lib")							
-#pragma comment(lib, "glaux.lib")	
-
+//#pragma comment(lib, "glew32.lib")
 using namespace std;
 
 
 
-/** 多重纹理函数 */
-PFNGLMULTITEXCOORD2FARBPROC     glMultiTexCoord2fARB = NULL;
-PFNGLACTIVETEXTUREARBPROC       glActiveTextureARB = NULL;
 
 
 
