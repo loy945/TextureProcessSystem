@@ -123,9 +123,27 @@ int CGLBaseView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_hRC = wglCreateContext(m_pDC->m_hDC);//创建 RC
+	wglMakeCurrent(m_pDC->m_hDC, m_hRC);
+	if (m_hRC==NULL)
+	{
+		return false;
+	}
+	glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
+	if (glActiveTextureARB == NULL)
+	{
+		return false;
+	}
 
+	const GLubyte *version = glGetString(GL_VERSION);
+	//如果你检测到的版本号不小于1.3.0，则可以写以下程序
+	glActiveTexture = (PFNGLACTIVETEXTUREPROC)wglGetProcAddress("glActiveTexture");
+	if (glActiveTexture == NULL)
+	{
+		//出错处理
+		return false;
+	}
 	
-
+	glActiveTextureARB(GL_TEXTURE1_ARB);
 
 	return 0;
 }
