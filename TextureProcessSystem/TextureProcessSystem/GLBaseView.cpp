@@ -110,7 +110,52 @@ CTextureProcessSystemDoc * CGLBaseView::GetDocument()
 }
 // CGLBaseView 消息处理程序
 
+bool CGLBaseView::isExtensionSupported(const char* string)
+{
+	char *extension;			/**< 指向扩展字符串的指针 */
+	char *end;				    /**< 最后一个字符指针 */
+	int idx;
 
+	extension = (char*)glGetString(GL_EXTENSIONS);
+	if (extension == NULL)
+		return false;
+
+	/** 得到最后一个字符 */
+	end = extension + strlen(extension);
+
+	/** 循环查找字符串string */
+	while (extension < end)
+	{
+		/** 找到空格前的一个字符串 */
+		idx = strcspn(extension, " ");
+
+		/** 检查是否找到字符串string */
+		if ((strlen(string) == idx) && (strncmp(string, extension, idx) == 0))
+		{
+			return true;
+		}
+
+		/** 当前串不是string,继续下一个字符串 */
+		extension += (idx + 1);
+	}
+	/** 没有找到,则返回false */
+	return false;
+}
+
+bool CGLBaseView::initMultiTexture()
+{
+	/** 检查是否支持扩展 */
+	if (isExtensionSupported("GL_ARB_multitexture"))
+	{
+
+		/** 获得函数指针地址 */
+		glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
+		glMultiTexCoord2fARB = (PFNGLMULTITEXCOORD2FARBPROC)wglGetProcAddress("glMultiTexCoord2fARB");
+		return true;
+	}
+	else
+		return false;
+}
 int CGLBaseView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CView::OnCreate(lpCreateStruct) == -1)
@@ -124,10 +169,105 @@ int CGLBaseView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_hRC = wglCreateContext(m_pDC->m_hDC);//创建 RC
 
-	
-
-
+	InitialOpenGL(); //初始化OpenGL
+	if (!initMultiTexture())
+	{
+		//不支持多重纹理
+		return -1;
+	}
+	LoadGLTextures();
+	glActiveTextureARB(GL_TEXTURE1_ARB);
 	return 0;
+}
+void CGLBaseView::drawPLY()
+{
+
+	vector<gl_face> * Triangle = &(m_pDoc->plyLoader.faceArry);
+	vector<gl_point> * Vertex = &(m_pDoc->plyLoader.pointArry);
+	vector<gl_point2d> * Vertex2d = &(m_pDoc->plyLoader.point2DArry);
+	if (m_pDoc->plyLoader.pointArry[Triangle->at(0).ptnum[0]].x<-4e+8)
+	{
+		AfxMessageBox("model data is null");
+		exit(-1);
+	}
+	int i;
+	int a = 3;
+	glClear(GL_COLOR_BUFFER_BIT);
+	glBegin(GL_TRIANGLES);//显示模型的面
+	for (int i = 0; i<m_pDoc->plyLoader.faceArry.size(); i++)
+	{
+		float v1x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].x;
+		float v1y = m_pDoc->plyLoader. pointArry[Triangle->at(i).ptnum[0]].y;
+		float v1z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].z;
+
+		float v2x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].x;
+		float v2y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].y;
+		float v2z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].z;
+
+		float v3x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].x;
+		float v3y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].y;
+		float v3z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].z;
+
+		if (Triangle->at(i).texCoords.size() == 0)
+		{
+			if (v1x<-4e+8)
+				break;
+			if (Triangle->at(i).isShowColorIn3D)
+			{
+				glColor3f(Triangle->at(i).r, Triangle->at(i).g, Triangle->at(i).b);
+			}
+			else
+			{
+				glColor3f(0.5, 0.5, 0.5);//灰色
+			}
+		
+		}
+	}
+	glEnd();
+
+
+	glEnable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glBegin(GL_TRIANGLES);//显示
+	for (int i = 0; i<m_pDoc->plyLoader.faceArry.size(); i++)
+	{
+		if (Triangle->at(i).texCoords.size()>0)
+		{
+			glColor4f(1, 1, 1, 1);
+
+			float v1x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].x;
+			float v1y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].y;
+			float v1z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].z;
+
+			float v2x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].x;
+			float v2y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].y;
+			float v2z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].z;
+
+			float v3x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].x;
+			float v3y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].y;
+			float v3z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].z;
+
+
+			for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
+			{
+				glMultiTexCoord2fARB(texName, Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
+
+				glVertex3f(v1x, v1y, v1z);
+
+				glMultiTexCoord2fARB(texName, Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
+
+				glVertex3f(v2x, v2y, v2z);
+
+				glMultiTexCoord2fARB(texName, Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
+
+				glVertex3f(v3x, v3y, v3z);
+			}
+		}
+	}
+	glEnd();
+	glFlush();
+	glDisable(GL_TEXTURE_2D);
 }
 
 
@@ -418,7 +558,7 @@ void CGLBaseView::InitialOpenGL()
 	m_hRC = wglCreateContext(m_pDC->GetSafeHdc());
 	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 
-	//LoadGLTextures();
+
 	
 
 }
@@ -503,8 +643,8 @@ void CGLBaseView::DrawScene()
 		/*glColor3f(1.0, 1.0, 1.0);*/
 		if(modelShowIn3Dor2D)
 		{
-			m_pDoc->plyLoader.Draw();
-			
+			//m_pDoc->plyLoader.Draw();
+			drawPLY();
 			if (m_pDoc->_ftep)
 			{
 				FindTextureElementPosition * ftep = m_pDoc->_ftep;

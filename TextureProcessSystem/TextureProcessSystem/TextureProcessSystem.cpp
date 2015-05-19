@@ -134,28 +134,8 @@ BOOL CTextureProcessSystemApp::InitInstance()
 	m_pMainWnd->SetWindowText("纹理处理系统");
 	m_pMainWnd->UpdateWindow();
 
-	//check multitexture support
-	glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
-	if (glActiveTextureARB == NULL)
-	{
-		return false;
-	}
+	
 
-	const GLubyte *version = glGetString(GL_VERSION);
-	//如果你检测到的版本号不小于1.3.0，则可以写以下程序
-	PFNGLACTIVETEXTUREPROC glActiveTexture = (PFNGLACTIVETEXTUREPROC)wglGetProcAddress("glActiveTexture");
-	if (glActiveTexture == NULL)
-	{
-		//出错处理
-		return false;
-	}
-	/*http://bbs.csdn.net/topics/380252820
-	http://bbs.csdn.net/topics/380252820
-	http://www.68idc.cn/help/buildlang/ask/20150209215034.html
-	http://zhidao.baidu.com/link?url=a1CKRpMQkAeVQASafAOupwSc2btECELA2ZCFfkIDod3BHBwnzb0RRwiCYW9SG1t1_zkJFoI3xBBQjks3dFd1uK
-	http://blog.csdn.net/zckloveczy/article/details/4311725
-	http://blog.sina.com.cn/s/blog_685b5b220100v0md.html
-	*/
 
 	
 	return TRUE;

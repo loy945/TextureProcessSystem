@@ -43,9 +43,11 @@ public:
 
 	BOOL SetupPixelFormat(); //绘图板设置
 	void InitialOpenGL(); //初始化OpenGL
-
+	bool initMultiTexture();
+	bool isExtensionSupported(const char* string);
 	void makeCheckImage(void);
 	void LoadGLTextures(void);
+	void drawPLY(void);
 	//2014.8.11 模型旋转变换所需变量
 	bool isInit;
 	//2015.3.2添加模型展开为平面变量
