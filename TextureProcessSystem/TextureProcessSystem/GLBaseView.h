@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "TextureProcessSystemDoc.h"
 #include "plyloader.h"
 #include "cv.h"
@@ -6,9 +7,8 @@
 #include <opencv2/opencv.hpp> 
 // CGLBaseView 视图
 #define  BUFFER_LENGTH 512
-
-
 #include "var.h"
+#include "CBMPLoader.h"
 
 class CGLBaseView : public CView
 {
@@ -43,14 +43,19 @@ public:
 
 	BOOL SetupPixelFormat(); //绘图板设置
 	void InitialOpenGL(); //初始化OpenGL
-
+	bool initMultiTexture();
+	bool isExtensionSupported(const char* string);
 	void makeCheckImage(void);
 	void LoadGLTextures(void);
+	void drawPLY(void);
+	void drawPLYwithMultiTexture();
 	//2014.8.11 模型旋转变换所需变量
 	bool isInit;
 	//2015.3.2添加模型展开为平面变量
 	bool modelShowIn3Dor2D;//true代表显示三维模型 false显示展开到二维上的模型
 	void draw2DModel();
+	CBMPLoader m_texture[4];      /**< 载入4幅纹理 */
+	void DrawTest();
 public:
 	//缩放变量
 	float scale_X;

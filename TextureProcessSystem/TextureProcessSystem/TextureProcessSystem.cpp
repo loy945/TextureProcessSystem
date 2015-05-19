@@ -1,6 +1,7 @@
 
 // TextureProcessSystem.cpp : 定义应用程序的类行为。
 //
+
 #include "stdafx.h"
 #include "afxwinappex.h"
 #include "afxdialogex.h"
@@ -77,14 +78,6 @@ BOOL CTextureProcessSystemApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinApp::InitInstance();
-	//check multitexture support
-	
-	const GLubyte *str = glGetString(GL_EXTENSIONS);
-
-
-
-
-	
 
 
 	// 初始化 OLE 库
@@ -141,15 +134,6 @@ BOOL CTextureProcessSystemApp::InitInstance()
 	m_pMainWnd->SetWindowText("纹理处理系统");
 	m_pMainWnd->UpdateWindow();
 
-	//check multitexture support
-
-	/*http://bbs.csdn.net/topics/380252820
-	http://bbs.csdn.net/topics/380252820
-	http://www.68idc.cn/help/buildlang/ask/20150209215034.html
-	http://zhidao.baidu.com/link?url=a1CKRpMQkAeVQASafAOupwSc2btECELA2ZCFfkIDod3BHBwnzb0RRwiCYW9SG1t1_zkJFoI3xBBQjks3dFd1uK
-	http://blog.csdn.net/zckloveczy/article/details/4311725
-	http://blog.sina.com.cn/s/blog_685b5b220100v0md.html
-	*/
 
 	
 	return TRUE;

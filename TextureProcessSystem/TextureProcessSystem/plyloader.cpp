@@ -284,7 +284,7 @@ void Model_PLY::Draw()
 	glDrawArrays(GL_TRIANGLES, 0, TotalConnectedTriangles);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);*/
-
+	return;
 	vector<gl_face> * Triangle=&(faceArry);
 	vector<gl_point> * Vertex=&(pointArry);
 	vector<gl_point2d> * Vertex2d=&(point2DArry);
@@ -332,7 +332,6 @@ void Model_PLY::Draw()
 	}
 	glEnd();
 
-	
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -355,20 +354,21 @@ void Model_PLY::Draw()
 			float v3y = pointArry[Triangle->at(i).ptnum[2]].y;
 			float v3z = pointArry[Triangle->at(i).ptnum[2]].z;
 
-		
-			glMultiTexCoord2f(GL_TEXTURE0, 0.0f, 0.0f);
-			glMultiTexCoord2f(GL_TEXTURE0, 1.0f, 0.0f);
-			glVertex3f(0.0f, 0.0f,0.0f);
-			glMultiTexCoord2f(GL_TEXTURE0, 0.5f, 1.0f);
-			glMultiTexCoord2f(GL_TEXTURE0, 0.5f, 0.0f);
-			glVertex3f(50.0f, 100.0f, 0.0f);
-			glMultiTexCoord2f(GL_TEXTURE0, 1.0f, 0.0f);
-			glMultiTexCoord2f(GL_TEXTURE0, 1.0f, 1.0f);
-			glVertex3f(50.0f, 100.0f, 0.0f);
-		
 
-			/*for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
+			for (int j = 0; j < Triangle->at(i).texCoords.size(); j++)
 			{
+				/*	glTexCoord2f(Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
+
+					glVertex3f(v1x, v1y, v1z);
+
+					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
+
+					glVertex3f(v2x, v2y, v2z);
+
+					glTexCoord2f(Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
+
+					glVertex3f(v3x, v3y, v3z);
+					}*/
 				glMultiTexCoord2f(texName, Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
 
 				glVertex3f(v1x, v1y, v1z);
@@ -380,20 +380,9 @@ void Model_PLY::Draw()
 				glMultiTexCoord2f(texName, Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
 
 				glVertex3f(v3x, v3y, v3z);
-			}*/
-			/*glMultiTexCoord2f(texName,Triangle->at(i).texCoords[j]->cor[0][0], Triangle->at(i).texCoords[j]->cor[0][1]);
-
-			glVertex3f(v1x, v1y, v1z);
-
-			glMultiTexCoord2f(texName,Triangle->at(i).texCoords[j]->cor[1][0], Triangle->at(i).texCoords[j]->cor[1][1]);
-
-			glVertex3f(v2x, v2y, v2z);
-
-			glMultiTexCoord2f(texName,Triangle->at(i).texCoords[j]->cor[2][0], Triangle->at(i).texCoords[j]->cor[2][1]);
-
-			glVertex3f(v3x, v3y, v3z);	*/
+			}
 		}
-		
+			
 	}
 	glEnd();
 	glFlush();
