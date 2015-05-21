@@ -394,10 +394,26 @@ void gl_face::updateTexCoord()
 {
 	if (!texCoord.update)
 	{
+		texCoord.update = true;
+		//判断是否越界
+		/*bool isTexCoodInBox[3] = {false ,false, false};
+		for (int i = 0; i < 3; i++)
+		{
+			if (texCoord.cor[i][0] <= 1 && texCoord.cor[i][0] >= 0 && texCoord.cor[i][1] <= 1 && texCoord.cor[i][1] >= 0)
+			{
+				isTexCoodInBox[i] = true;
+			}
+		}
+		if (!isTexCoodInBox[0] && !isTexCoodInBox[1] && !isTexCoodInBox[2])
+		{
+			return;
+			//越界
+		}*/
+
 		//更新纹理信息，压入队列
 		Point3fv3 * pt3fv3 = new Point3fv3();
 		pt3fv3->setValue(texCoord);
 		texCoords.push_back(pt3fv3);
-		texCoord.update = true;
+		
 	}
 }

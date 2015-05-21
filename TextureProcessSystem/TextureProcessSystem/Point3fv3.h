@@ -8,6 +8,8 @@ public:
 	bool is_valid(float cor[3][3]);
 	bool update;
 	void setValue(Point3fv3 & pt3fv3);
+	void resetValue();
+	int texCoorGenTime;//纹理坐标是哪一次生成的
 	
 };
 

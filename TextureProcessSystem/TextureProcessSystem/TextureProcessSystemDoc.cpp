@@ -45,6 +45,11 @@ CTextureProcessSystemDoc::CTextureProcessSystemDoc()
 	userSelectingTriangleIndex=-1;
 	showGroup=1;
 	_ftep = NULL;
+	texGenTime = 0;
+	logTex = false;
+	show_ftep = true;
+	offset[0] = 0;
+	offset[1] = 0;
 }
 
 CTextureProcessSystemDoc::~CTextureProcessSystemDoc()
@@ -220,6 +225,10 @@ void CTextureProcessSystemDoc::calculateValue(char rbffuntion)
 		{
 			if(Triangle->at(i).isSetValue==false)
 			{
+				if (i == 3684)
+				{
+					int a = 0;
+				}
 				rotate(i,output);
 				Triangle->at(i).value=rbf(output[0],output[1],size,c,coefficient,rbffuntion);//保存插值结果
 				while(Triangle->at(i).value>π)
@@ -698,14 +707,17 @@ void CTextureProcessSystemDoc::R(double a,double b,float *n,float *vec,float *re
 	cvMatMul(R2,A,A);
 
 	gl_point2d  pt2d_1;
-	pt2d_1.x=CV_MAT_ELEM( *A,float,0,0);
-	pt2d_1.y=CV_MAT_ELEM( *A,float,1,0);
+	pt2d_1.x = CV_MAT_ELEM(*A, float, 0, 0);
+	pt2d_1.y = CV_MAT_ELEM(*A, float, 1, 0);
 	pt2d_1.pointNum=Vertex2d->size();
 	Triangle->at(i).ptnum_2d[0]=pt2d_1.pointNum;
 	Vertex2d->push_back(pt2d_1);
 	Triangle->at(i)._2dx[0]=CV_MAT_ELEM( *A,float,0,0);
 	Triangle->at(i)._2dy[0]=CV_MAT_ELEM( *A,float,1,0);
-
+	//if (Triangle->at(i)._2dx[0] > 9999 || Triangle->at(i)._2dx[0]<-9999 || Triangle->at(i)._2dy[0]>9999 || Triangle->at(i)._2dy[0] < -9999)
+	//{
+	//	return; 
+	//}
 	//A点对应的xy坐标
 	CV_MAT_ELEM( *A,float,0,0)=Vertex->at(pt2num).x; 
 	CV_MAT_ELEM( *A,float,1,0)=Vertex->at(pt2num).y; 
@@ -723,7 +735,10 @@ void CTextureProcessSystemDoc::R(double a,double b,float *n,float *vec,float *re
 	Vertex2d->push_back(pt2d_2);
 	Triangle->at(i)._2dx[1]=CV_MAT_ELEM( *A,float,0,0);
 	Triangle->at(i)._2dy[1]=CV_MAT_ELEM( *A,float,1,0);
-
+	if (Triangle->at(i)._2dx[1] > 9999 || Triangle->at(i)._2dx[1]<-9999 || Triangle->at(i)._2dy[1]>9999 || Triangle->at(i)._2dy[1] < -9999)
+	{
+		return;
+	}
 	//B点对应的xy坐标
 	
 	CV_MAT_ELEM( *A,float,0,0)=Vertex->at(pt3num).x; 
@@ -743,6 +758,10 @@ void CTextureProcessSystemDoc::R(double a,double b,float *n,float *vec,float *re
 	Triangle->at(i)._2dx[2]=CV_MAT_ELEM( *A,float,0,0);
 	Triangle->at(i)._2dy[2]=CV_MAT_ELEM( *A,float,1,0);
 	
+	if (Triangle->at(i)._2dx[2] > 9999 || Triangle->at(i)._2dx[2]<-9999 || Triangle->at(i)._2dy[2]>9999 || Triangle->at(i)._2dy[2] < -9999)
+	{
+		return;
+	}
 	//C点对应的xy坐标
 
 	//显示当前2d坐标
@@ -1026,12 +1045,20 @@ void CTextureProcessSystemDoc::crosspoint2(float a,float *b,float *c)
 	c[0]=a;
 	c[1]=b[0]*a+b[1];
 }
-void CTextureProcessSystemDoc::count_TexcoordByHuang(int a,int b,int c,int d,int e)
+void CTextureProcessSystemDoc::count_TexcoordByHuang(int a, int b, int c, int d, int e)
 {
 	//保证输入有效性
-	if(a<0||b<0||c<0||d<0||e<0)
+	if (a < 0 || b < 0 || c < 0 || d < 0 || e < 0)
 	{
-		return ;
+		return;
+	}
+	if (d == 3684)
+	{
+		int qwet = 0;
+	}
+	if (a == 3684)
+	{
+		int qwet = 0;
 	}
 	//a 是未知三角形，d是已知三角形  的索引号
 	//编号第a三角形第c个顶点和第d个三角形第e个顶点重合 
@@ -1062,28 +1089,50 @@ void CTextureProcessSystemDoc::count_TexcoordByHuang(int a,int b,int c,int d,int
 		d_pt2d[i].y=Vertex2d->at(Triangle->at(d).ptnum_2d[i]).y;
 	}
 
-	float a_pcorex=Triangle->at(a).pcorex;
-	float a_pcorey=Triangle->at(a).pcorey;
+	float a_pcorex = Triangle->at(a).pcorex + offset[0];
+	float a_pcorey = Triangle->at(a).pcorey + offset[1];
 	float a_h=Triangle->at(a).h;
 	float a_xita=Triangle->at(a).value;
 	//此处固定d=0;
 	d=centerIndex;
-	float d_pcorex=Triangle->at(d).pcorex;
-	float d_pcorey=Triangle->at(d).pcorey;
+	float d_pcorex = Triangle->at(d).pcorex + offset[0];
+	float d_pcorey = Triangle->at(d).pcorey + offset[1];
 	float d_h=Triangle->at(d).h;
 	float d_xita=Triangle->at(d).value;
-	
+
 	//d_xita=1.1877480;
 	//d_h=0.011479380;
 
-	float o2x = (-d_h*λ/2)*cos(-d_xita)+(-d_h*λ/2)*sin(-d_xita)+d_pcorex;
+	/*float s_i_n, c_o_s;
+	s_i_n = sin(d_xita);
+	c_o_s = cos(d_xita);
+
+	if (sin(d_xita) == 0 || cos(d_xita) == 0)
+	{
+		s_i_n = 1;
+		c_o_s = 1;
+	}
+
+	float o2x = (-d_h*λ / 2)*c_o_s - (-d_h*λ / 2)*s_i_n + d_pcorex;
 	
-    float o2y = (d_h*λ/2)*sin(-d_xita)+(-d_h*λ/2)*cos(-d_xita)+d_pcorey;
-
-	float A = ((a_pt2d[b].x-o2x)/(d_h*λ))*cos(d_xita)+((a_pt2d[b].y-o2y)/(d_h*λ))*sin(d_xita);
-	float B = (-(a_pt2d[b].x-o2x)/(d_h*λ))*sin(d_xita)+((a_pt2d[b].y-o2y)/(d_h*λ))*cos(d_xita);
+	float o2y = -(d_h*λ / 2)*s_i_n + (-d_h*λ / 2)*c_o_s + d_pcorey;
 
 
+	float A = ((a_pt2d[b].x - o2x) / (d_h*λ))*c_o_s + ((a_pt2d[b].y - o2y) / (d_h*λ))*s_i_n;
+	float B = (-(a_pt2d[b].x - o2x) / (d_h*λ))*s_i_n + ((a_pt2d[b].y - o2y) / (d_h*λ))*c_o_s;*/
+	/*if (A > 9999 || A <-9999 || B > 9999 || B <-9999)
+	{
+		return;
+	}*/
+
+	
+	float o2x = (-d_h*λ / 2)*cos(d_xita) - (-d_h*λ / 2)*sin(d_xita) + d_pcorex;
+
+	float o2y = -(d_h*λ / 2)*sin(d_xita) + (-d_h*λ / 2)*cos(d_xita) + d_pcorey;
+
+
+	float A = ((a_pt2d[b].x - o2x) / (d_h*λ))*cos(d_xita) + ((a_pt2d[b].y - o2y) / (d_h*λ))*sin(d_xita);
+	float B = (-(a_pt2d[b].x - o2x) / (d_h*λ))*sin(d_xita) + ((a_pt2d[b].y - o2y) / (d_h*λ))*cos(d_xita);
 
 	Triangle->at(a).texCoord.cor[b][0] = A;
 	Triangle->at(a).texCoord.cor[b][1] = B;
@@ -1243,12 +1292,14 @@ void CTextureProcessSystemDoc::alterFace2dCoord(int a,int d,int b,int c1,int c2,
 	//G[1]=k2*G[0]-(k2*A[0]-A[1]);//新坐标y
 	G[1]=(tan(k2)*(tan(k1)*B[0]-B[1])-tan(k1)*(tan(k2)*A[0]-A[1]))/(tan(k1)-tan(k2));
 */
+
 	pr1->init(A[0],A[1],B[0],B[1],C[0],C[1],D[0],D[1],E[0],E[1],F[0],F[1]);
 	//pr1->init(A[0],A[1],B[0],B[1],C[0],C[1],dd[0],dd[1],dd[2],ee[0],ee[1],ee[2],ff[0],ff[1],ff[2]);
 	pr1->getRes();
 	G[0]=pr1->resx;
 	G[1]=pr1->resy;
 	
+
 	Vertex2d->at(Triangle->at(a).ptnum_2d[b]).x=G[0];
 	Vertex2d->at(Triangle->at(a).ptnum_2d[b]).y=G[1];
 
@@ -1277,6 +1328,10 @@ void CTextureProcessSystemDoc::alterFace2dCoord(int a,int d,int b,int c1,int c2,
 
 void CTextureProcessSystemDoc::findDiffrentPoint(int a,int d,int &b,int &c1,int &c2,int e1,int e2)
 {
+	if (a == 3684)
+	{
+		int poi = 0;
+	}
 	//保证输入有效性
 	if(a<0||d<0)
 	{
@@ -1288,12 +1343,12 @@ void CTextureProcessSystemDoc::findDiffrentPoint(int a,int d,int &b,int &c1,int 
 	//a中点c1和d中的点e1重合
 	//a中点c2和d中的点e2重合
 	//pt1Index,int pt2Index 是传入两点的索引号
-	if(Triangle->at(a).is2DCordFixed)
+	/*if(Triangle->at(a).is2DCordFixed)
 	{
 		return;
 	}
 
-	
+	*/
 	for(int i=0;i<3;i++)
 	{
 		int k=Triangle->at(a).ptnum[i];
@@ -1361,6 +1416,7 @@ int  CTextureProcessSystemDoc::count_Texcoord(int d,int e1,int e2)
 			count++;
 			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 			count_TexcoordByHuang(a,b,c1,d,e1);//计算纹理
+			Triangle->at(a).texCoord.texCoorGenTime = texGenTime;
 			Triangle->at(a).texCoord.update = false;
 			Triangle->at(a).updateTexCoord();
 
@@ -1588,6 +1644,7 @@ void CTextureProcessSystemDoc::count_h(int i)
 		addIndextoProcesseTriangleIndex(i, i);
 		//添加center面片的纹理坐标
 		Triangle->at(i).texCoord.update = false;
+		Triangle->at(i).texCoord.texCoorGenTime = texGenTime;
 		Triangle->at(i).updateTexCoord();
 	//}
 	//return h;
@@ -1651,7 +1708,55 @@ int CTextureProcessSystemDoc::findFaceByTwoPoint(int point1,int point2,int oldFa
 	return -1;
 }
 
+void CTextureProcessSystemDoc::reset2dCoord()
+{
+	vector<gl_face> * Triangle = &(plyLoader.faceArry);
+	vector<gl_point> * Vertex = &(plyLoader.pointArry);
+	vector<gl_point2d> * Vertex2d = &(plyLoader.point2DArry);
+	int count = 0;
 
+	for (int i = 0; i < Triangle->size(); i++)
+	{
+		//重置纹理坐标
+		Triangle->at(i).texCoord.resetValue();
+		for (int j = 0; j < 3; j++)
+		{
+			Vertex2d->at(Triangle->at(i).ptnum_2d[j]).x = Triangle->at(i)._2dx[j];
+			Vertex2d->at(Triangle->at(i).ptnum_2d[j]).y = Triangle->at(i)._2dy[j];
+
+			Triangle->at(i).texCoord.cor[j][0] = Triangle->at(i)._2dx[j];
+			Triangle->at(i).texCoord.cor[j][1] = Triangle->at(i)._2dy[j];
+		}
+
+
+	
+		/*	Triangle->at(i).isProcessedTexCor=false;*/
+		/*if(Triangle->at(i).isProcessedTexCor||Triangle->at(i).textureclick)
+		{
+		count = 0;
+		for (int j = 0; j<3; j++)
+		{
+			auto vx = Triangle->at(i).texCoord.cor[j][0];
+			auto vy = Triangle->at(i).texCoord.cor[j][1];
+			if (vx>1 || vx<0 || vy>1 || vy<0)
+			{
+				count++;
+			}
+		}
+
+		if (count>2)
+		{
+			//超过判断条件 不贴图 下次重新贴这些三角形
+			Triangle->at(i).textureclick = false;
+			Triangle->at(i).is2DCordFixed = false;
+			for (int j = 0; j < 3; j++)
+			{
+				Triangle->at(i).texCoord.cor[j][0] = -1;
+				Triangle->at(i).texCoord.cor[j][1] = -1;
+			}
+		}*/
+	}
+}
 void CTextureProcessSystemDoc::resetOuterTriangleTex()
 {
 	return;
@@ -1730,6 +1835,7 @@ void CTextureProcessSystemDoc::calTexCor()
 			e2=1;
 			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 			count_TexcoordByHuang(a,b,c1,d,e1);
+			Triangle->at(a).texCoord.texCoorGenTime = texGenTime;
 			Triangle->at(a).texCoord.update = false;
 			Triangle->at(a).updateTexCoord();
 		}
@@ -1741,6 +1847,7 @@ void CTextureProcessSystemDoc::calTexCor()
 			e2=2;
 			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 			count_TexcoordByHuang(a,b,c1,d,e1);
+			Triangle->at(a).texCoord.texCoorGenTime = texGenTime;
 			Triangle->at(a).texCoord.update = false;
 			Triangle->at(a).updateTexCoord();
 		}
@@ -1752,6 +1859,7 @@ void CTextureProcessSystemDoc::calTexCor()
 			e2=0;
 			findDiffrentPoint(a,d,b,c1,c2,e1,e2);//输入a d e1 e2得到 b  c1 c2 
 			count_TexcoordByHuang(a,b,c1,d,e1);
+			Triangle->at(a).texCoord.texCoorGenTime = texGenTime;
 			Triangle->at(a).texCoord.update = false;
 			Triangle->at(a).updateTexCoord();
 		}
@@ -1816,6 +1924,7 @@ void CTextureProcessSystemDoc::calTexCorByIndex(int processedindex,int steps)
 	times++;
 	toProcesseTriangleIndex.clear();
 	pocessedTriangleIndex.clear();
+	reset2dCoord();
 	count_h(processedindex);
 	r=(rand()%256)/256.0;
 	g=(rand()%256)/256.0;
@@ -1940,4 +2049,48 @@ bool CTextureProcessSystemDoc::ispocessed(int index)
 		}
 	}*/
 	return false;
+}
+void CTextureProcessSystemDoc::calVertex2D(float pos[3], int index)
+{
+	//计算第index个targetTextureELement的偏移量
+	//目标中心基元的位置
+	float resPos[3];
+	float centerPos[3];
+	CvMat* R1 = cvCreateMat(4, 4, CV_32FC1);
+	CvMat* R2 = cvCreateMat(4, 4, CV_32FC1);
+	CvMat* A = cvCreateMat(4, 1, CV_32FC1);
+	centerPos[0] = plyLoader.faceArry[index].pcorex;
+	centerPos[1] = plyLoader.faceArry[index].pcorey;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			CV_MAT_ELEM(*R1, float, i, j) = plyLoader.faceArry[index].R1[i][j];
+			CV_MAT_ELEM(*R2, float, i, j) = plyLoader.faceArry[index].R2[i][j];
+		}
+	}
+	
+	CV_MAT_ELEM(*A, float, 0, 0) = pos[0];
+	CV_MAT_ELEM(*A, float, 1, 0) = pos[1];
+	CV_MAT_ELEM(*A, float, 2, 0) = pos[2];
+	CV_MAT_ELEM(*A, float, 3, 0) = 1;
+
+	cvMatMul(R1, A, A);
+	cvMatMul(R2, A, A);
+
+	resPos[0] = CV_MAT_ELEM(*A, float, 0, 0);
+	resPos[1] = CV_MAT_ELEM(*A, float, 1, 0);
+	resPos[2] = CV_MAT_ELEM(*A, float, 2, 0);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (abs(resPos[i]) < 1e-005)
+			resPos[i] = 0;
+	}
+	for (int  i = 0; i < 2; i++)
+	{
+		offset[i] = resPos[i] - centerPos[i];
+	}
+	
+
 }

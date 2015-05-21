@@ -13,6 +13,8 @@
 #include "GLBaseView.h"
 
 #include "FindTextureElementPosition.h"
+#include <fstream>
+using namespace std;
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -282,29 +284,52 @@ void CTextureProcessSystemApp::Check()
 	{
 
 		int index=pDoc->userSelectTriangleIndex.at(it);
-
-		pDoc->calTexCorByIndex(index,4);
+		pDoc->offset[0] = 0;
+		pDoc->offset[1] = 0;
+		pDoc->calTexCorByIndex(index,8);
 		times++;
-		CString s1;
-		s1.Format("新添加:  %d,times: %d",pDoc->count-lastCount,times);
-		lastCount=pDoc->count;
-		AfxMessageBox(s1);
-
+		
 		it++;
-	}
-	
-	CString s1;
-	s1.Format("processed Nums:  %d",pDoc->count);
-	AfxMessageBox(s1);
-	*/
-	//为每个基元贴图
-	
-	/*for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
-	{
-		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
 	}*/
-	pDoc->calTexCorByIndex(0, 4);
-	pDoc->calTexCorByIndex(2677, 4);
+	
+	
+	
+	//为每个基元贴图
+	/*ofstream f("triangleIndex.txt");
+	for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
+	{
+		//pDoc->texGenTime++;
+		pDoc->calVertex2D(pDoc->_ftep->m_targetTexture->tes[i]->pos, pDoc->_ftep->m_targetTexture->tes[i]->face->facenum);
+		f << pDoc->_ftep->m_targetTexture->tes[i]->face->facenum << endl;
+		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
+	}
+	f.close();*/
+	//pDoc->texGenTime = 1;
+	//pDoc->calTexCorByIndex(0, 40);
+	/*pDoc->calTexCorByIndex(2387, 4);
+	pDoc->calTexCorByIndex(2386, 4);
+	pDoc->calTexCorByIndex(2677, 4);*/
+
+	pDoc->calTexCorByIndex(3771, 8);
+	pDoc->calTexCorByIndex(3682, 8);
+	pDoc->calTexCorByIndex(1670, 8);
+	pDoc->calTexCorByIndex(3700, 8);
+	pDoc->calTexCorByIndex(3771, 8);
+	pDoc->calTexCorByIndex(3702, 8);
+	pDoc->calTexCorByIndex(3773, 8);
+	pDoc->calTexCorByIndex(3685, 8);
+		
+		
+		
+		
+		
+
+	pDoc->logTex = true;
+	pDoc->show_ftep = false;
 }
 
 
+//CString s1;
+//s1.Format("新添加:  %d,times: %d", pDoc->count - lastCount, times);
+//lastCount = pDoc->count;
+//AfxMessageBox(s1);

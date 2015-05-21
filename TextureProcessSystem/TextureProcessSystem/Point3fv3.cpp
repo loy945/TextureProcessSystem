@@ -12,6 +12,7 @@ Point3fv3::Point3fv3()
 			cor[i][j] = -1;
 		}
 	}
+	texCoorGenTime = 0;
 }
 
 
@@ -49,6 +50,19 @@ void Point3fv3::setValue(Point3fv3 & pt3fv3)
 		}
 	}
 	this->update = pt3fv3.update;
-
+	this->texCoorGenTime = pt3fv3.texCoorGenTime;
+	 
 }
 
+void Point3fv3::resetValue()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			cor[i][j] = -1;
+		}
+	}
+	this->update = true;
+	this->texCoorGenTime = 0;
+}

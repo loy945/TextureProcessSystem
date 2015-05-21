@@ -42,13 +42,13 @@ void PlaneRotate::init(float ax,float ay,float bx,float by,float cx,float cy,
 	this->fx=fx;
 	this->fy=fy;
 
-	circles[0].center.x=ax;
-	circles[0].center.y=ay;
-	circles[1].center.x=bx;
-	circles[1].center.y=by;
+	circles[0].center.x=ax;//e1---c1
+	circles[0].center.y=ay;//e1
+	circles[1].center.x=bx;//e2---c2
+	circles[1].center.y=by;//e2
 
 
-
+	//fx,fy b; dx,dy c1, ex,ey c2;
 	circles[0].r=sqrtf(pow((fx-dx),2)+pow((fy-dy),2));
 	circles[1].r=sqrtf(pow((fx-ex),2)+pow((fy-ey),2));
 	

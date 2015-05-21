@@ -56,6 +56,7 @@ public:
 	void draw2DModel();
 	CBMPLoader m_texture[4];      /**< 载入4幅纹理 */
 	void DrawTest();
+
 public:
 	//缩放变量
 	float scale_X;
