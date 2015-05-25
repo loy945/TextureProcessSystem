@@ -3,7 +3,8 @@
 
 #include "stdafx.h"
 #include "TextureProcessSystem.h"
-#include "MainFrm.h"
+#include "
+Frm.h"
 #include "TextureProcessSystemDoc.h"
 #include "GLBaseView.h"
 #include "C_Left_Top_View.h"

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "var.h"
 #include "plyloader.h"
-
 Model_PLY::Model_PLY()
 {
 	Faces_Triangles = NULL;
@@ -273,6 +272,10 @@ bool Model_PLY::Load(string filename)
 		MessageBox(NULL,_T("文件格式错误"),_T("错误"),MB_OK);
 		return false;
 	}
+
+
+	}
+
 	return false;
 }
 void Model_PLY::Draw()

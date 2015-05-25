@@ -1103,27 +1103,7 @@ void CTextureProcessSystemDoc::count_TexcoordByHuang(int a, int b, int c, int d,
 	//d_xita=1.1877480;
 	//d_h=0.011479380;
 
-	/*float s_i_n, c_o_s;
-	s_i_n = sin(d_xita);
-	c_o_s = cos(d_xita);
 
-	if (sin(d_xita) == 0 || cos(d_xita) == 0)
-	{
-		s_i_n = 1;
-		c_o_s = 1;
-	}
-
-	float o2x = (-d_h*λ / 2)*c_o_s - (-d_h*λ / 2)*s_i_n + d_pcorex;
-	
-	float o2y = -(d_h*λ / 2)*s_i_n + (-d_h*λ / 2)*c_o_s + d_pcorey;
-
-
-	float A = ((a_pt2d[b].x - o2x) / (d_h*λ))*c_o_s + ((a_pt2d[b].y - o2y) / (d_h*λ))*s_i_n;
-	float B = (-(a_pt2d[b].x - o2x) / (d_h*λ))*s_i_n + ((a_pt2d[b].y - o2y) / (d_h*λ))*c_o_s;*/
-	/*if (A > 9999 || A <-9999 || B > 9999 || B <-9999)
-	{
-		return;
-	}*/
 
 	
 	float o2x = (-d_h*λ / 2)*cos(d_xita) - (-d_h*λ / 2)*sin(d_xita) + d_pcorex;
@@ -1136,8 +1116,8 @@ void CTextureProcessSystemDoc::count_TexcoordByHuang(int a, int b, int c, int d,
 
 	Triangle->at(a).texCoord.cor[b][0] = A;
 	Triangle->at(a).texCoord.cor[b][1] = B;
-	//Triangle->at(a)._2du[b]=A;
-	//Triangle->at(a)._2dv[b]=B;
+	/*Triangle->at(a)._2du[b]=A;
+	Triangle->at(a)._2dv[b]=B;*/
 
 	//至此纹理已经算出来了
 	/*if(!Triangle->at(a).textureclick)

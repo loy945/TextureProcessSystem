@@ -4,7 +4,10 @@
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
-#define IDR_MAINFRAME                   128
+#define IDR_
+
+
+FRAME                   128
 #define IDR_TextureProcessSTYPE         130
 #define ID_BUTTON_SETVALUE              32779
 #define ID_BUTTON_SETVALUE_L            32779
