@@ -2,6 +2,8 @@
 #include "var.h"
 #include "plyloader.h"
 
+#include <fstream>
+using namespace std;
 Model_PLY::Model_PLY()
 {
 	Faces_Triangles = NULL;
@@ -9,6 +11,7 @@ Model_PLY::Model_PLY()
 	Vertex_Buffer = NULL;
 	Normals = NULL;
 	showPart=1;
+
 }
 
 Model_PLY::~Model_PLY()

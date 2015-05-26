@@ -93,6 +93,7 @@ public:
 	//2015.5.10
 	vector<Point3fv3 *> texCoords;//纹理坐标数组，可以保存多组纹理坐标
 	Point3fv3 texCoord;//纹理坐标
+	//5015.5.26
 	
 public:
 	void updateTexCoord();
@@ -113,7 +114,6 @@ public:
 	bool Model_PLY::Load(string filename);
 	void Model_PLY::Draw();
 	float* Model_PLY::calculateNormal(float *coord1, float *coord2, float *coord3);
-
 	Model_PLY();
 	~Model_PLY();
 

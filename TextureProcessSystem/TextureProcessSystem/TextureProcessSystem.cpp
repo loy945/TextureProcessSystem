@@ -13,6 +13,7 @@
 #include "GLBaseView.h"
 
 #include "FindTextureElementPosition.h"
+#include "Parameterization.h"
 #include <fstream>
 using namespace std;
 #ifdef _DEBUG
@@ -172,6 +173,7 @@ protected:
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
 {
+
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
@@ -195,10 +197,18 @@ void CTextureProcessSystemApp::OnSetValue(char rbffuntion)
 	CFrameWnd* pMain=(CFrameWnd*)CWinThread::m_pMainWnd;
 	CTextureProcessSystemDoc * pDoc = (CTextureProcessSystemDoc*)pMain->CFrameWnd::GetActiveDocument();
 
-	pDoc->calculateValue(rbffuntion);
+	Parameterization p1;
+	vector<int> v;
+	for (int i = 0; i <pDoc->plyLoader.pointArry.size(); i++)
+	{
+		v.push_back(i);
+	}
+	p1.face_Parameterization(&pDoc->plyLoader, v);
+
+	/*pDoc->calculateValue(rbffuntion);
 	CString s1;
 	s1.Format("%s ²åÖµ",&rbffuntion);
-	AfxMessageBox(s1);
+	AfxMessageBox(s1);*/
 
 }
 void CTextureProcessSystemApp::OnSetValueL()
