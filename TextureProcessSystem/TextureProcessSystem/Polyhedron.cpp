@@ -1,5 +1,9 @@
+#pragma once
 #include "stdafx.h"
 #include "Polyhedron.h"
+#include "Point3D.h"
+#include "Point2d.h"
+#include "PCBCGSolver.h"
 
 Polyhedron::Polyhedron(){
 	// Default setting
@@ -7,7 +11,7 @@ Polyhedron::Polyhedron(){
 	paramtype = 2;
 	boundarytype = 0;
 	weighttype = 0;
-	iteNum = 2000;
+	iteNum = 200;
 	gammaP = 1.0;
 	PCBCGerror = pow(0.1, 6.0);
 	smooth = 1;
@@ -48,6 +52,7 @@ void Polyhedron::param(){
 		}
 	}
 }
+
 void Polyhedron::readmesh(char *filename){
 
 	FILE *in = NULL;
@@ -478,7 +483,7 @@ void Polyhedron::memoryallocate(int dV, int dF){
 		G[i] = 0.0;
 	}
 }
-void Polyhedron::setPoint(int i, double dx, double dy, double dz){
+void Polyhedron::setPoint(int i, float dx, float dy, float dz){
 	point[i] = new Point3D(dx, dy, dz);
 	IHead[i] = new IDList();
 	ITail[i] = new IDList();
@@ -2144,7 +2149,7 @@ void Polyhedron::setLaplaceC(){
 
 }
 double Polyhedron::getCurrentE(){
-	int i, j;
+	int i=0, j=0;
 	IDList *now = NULL;
 	double varphi, ddv, dsize1, sumarea;
 	double dddhval = 0.0;

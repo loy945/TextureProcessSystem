@@ -29,9 +29,12 @@ public:
 	GLfloat y;
 	GLfloat z;
 
+	GLfloat u;
+	GLfloat v;
+
 	int pointNum;//点的序列号
 	vector<int> beLongToFaceIndex;
-	gl_point(){ x = y = z = 0; pointNum = -1; }
+	gl_point(){ x = y = z = 0; pointNum = -1; u = -1; v = -1; }
 };
 class gl_point2d
 {
@@ -69,6 +72,7 @@ public:
 	gl_face(){ facenum = -1;vectorPosX=0;vectorPosY=0;value=0;isSetValue=false;
 	textureclick=false;r=1;g=1;b=1;
 	is2DCordFixed=false;isProcessedTexCor=false;renderTime=0;isShowColorIn3D=false;
+	parameterization = false;
 	}
 	//3.22 2D坐标平移拼接后固定
 	bool is2DCordFixed;
@@ -94,6 +98,7 @@ public:
 	vector<Point3fv3 *> texCoords;//纹理坐标数组，可以保存多组纹理坐标
 	Point3fv3 texCoord;//纹理坐标
 	//5015.5.26
+	bool parameterization;
 	
 public:
 	void updateTexCoord();
@@ -112,6 +117,7 @@ class Model_PLY
 {
 public:
 	bool Model_PLY::Load(string filename);
+	void Model_PLY::writeMesh(char *filename);
 	void Model_PLY::Draw();
 	float* Model_PLY::calculateNormal(float *coord1, float *coord2, float *coord3);
 	Model_PLY();

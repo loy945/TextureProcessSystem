@@ -70,7 +70,18 @@ float* Model_PLY::calculateNormal(float *coord1, float *coord2, float *coord3)
 
 	return norm;
 }
-
+void Model_PLY::writeMesh(char *filename){
+	int i = 0;
+	FILE *out = fopen(filename, "w");
+	fprintf(out, "%d\n", this->pointArry.size());
+	fprintf(out, "%d\n", this->faceArry.size());
+	for (i = 0; i<this->pointArry.size(); i++){
+		fprintf(out, "%lf %lf %lf\n", pointArry[i].x, pointArry[i].y, pointArry[i].z);
+	}
+	for (i = 0; i<this->faceArry.size(); i++)
+		fprintf(out, "3 %d %d %d\n", faceArry[i].ptnum[0], faceArry[i].ptnum[1], faceArry[i].ptnum[2]);
+	fclose(out);
+}
 bool Model_PLY::Load(string filename)
 {
 	this->TotalConnectedTriangles = 0;

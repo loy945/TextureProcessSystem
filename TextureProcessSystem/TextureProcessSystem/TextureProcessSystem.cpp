@@ -14,6 +14,7 @@
 
 #include "FindTextureElementPosition.h"
 #include "Parameterization.h"
+#include "LocalParameterization.h"
 #include <fstream>
 using namespace std;
 #ifdef _DEBUG
@@ -197,18 +198,11 @@ void CTextureProcessSystemApp::OnSetValue(char rbffuntion)
 	CFrameWnd* pMain=(CFrameWnd*)CWinThread::m_pMainWnd;
 	CTextureProcessSystemDoc * pDoc = (CTextureProcessSystemDoc*)pMain->CFrameWnd::GetActiveDocument();
 
-	Parameterization p1;
-	vector<int> v;
-	for (int i = 0; i <pDoc->plyLoader.pointArry.size(); i++)
-	{
-		v.push_back(i);
-	}
-	p1.face_Parameterization(&pDoc->plyLoader, v);
-
-	/*pDoc->calculateValue(rbffuntion);
+	
+	pDoc->calculateValue(rbffuntion);
 	CString s1;
 	s1.Format("%s ²åÖµ",&rbffuntion);
-	AfxMessageBox(s1);*/
+	AfxMessageBox(s1);
 
 }
 void CTextureProcessSystemApp::OnSetValueL()
@@ -319,7 +313,7 @@ void CTextureProcessSystemApp::Check()
 	/*pDoc->calTexCorByIndex(2387, 4);
 	pDoc->calTexCorByIndex(2386, 4);
 	pDoc->calTexCorByIndex(2677, 4);*/
-
+	/*
 	pDoc->calTexCorByIndex(3771, 8);
 	pDoc->calTexCorByIndex(3682, 8);
 	pDoc->calTexCorByIndex(1670, 8);
@@ -328,9 +322,39 @@ void CTextureProcessSystemApp::Check()
 	pDoc->calTexCorByIndex(3702, 8);
 	pDoc->calTexCorByIndex(3773, 8);
 	pDoc->calTexCorByIndex(3685, 8);
+		*/
 		
-		
-		
+	//pDoc->calTexCorByIndex(0,1000);
+	//times++;
+	/*int it=0;
+	while(it<pDoc->userSelectTriangleIndex.size())
+	{
+
+	int index=pDoc->userSelectTriangleIndex.at(it);
+	pDoc->offset[0] = 0;
+	pDoc->offset[1] = 0;
+	pDoc->calTexCorByIndex(index,8);
+	times++;
+
+	it++;
+	}*/
+	vector<int> v;
+	v.push_back(0);
+	v.push_back(2677);
+	v.push_back(2386);
+	v.push_back(2387);
+	pDoc->plyLoader.faceArry[0].parameterization = true;
+	pDoc->plyLoader.faceArry[2677].parameterization = true;
+	pDoc->plyLoader.faceArry[2386].parameterization = true;
+	pDoc->plyLoader.faceArry[2387].parameterization = true;
+	//for (int i = 0; i <pDoc->plyLoader.faceArry.size(); i++)
+	//{
+	//v.push_back(i);
+	//pDoc->plyLoader.faceArry[i].parameterization = true;
+	//}
+	//p1.face_Parameterization(&pDoc->plyLoader, v);
+	LocalParameterization lp;
+	lp.init(&pDoc->plyLoader, v);
 		
 		
 

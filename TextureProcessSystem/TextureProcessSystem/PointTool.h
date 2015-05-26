@@ -8,9 +8,9 @@ This C++ sources are allowed for only primary user of
 research and educational purposes. Don't use secondary: copy, distribution, 
 diversion, business purpose, and etc.. 
  */
-class Point3D;
-class Point2d;
-
+#pragma once
+#include "Point3D.h"
+#include "Point2d.h"
 class PointTool{
  public:
   Point3D *ddv1;

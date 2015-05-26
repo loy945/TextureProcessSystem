@@ -10,7 +10,8 @@ This C++ sources are allowed for only primary user of
 research and educational purposes. Don't use secondary: copy, distribution, 
 diversion, business purpose, and etc.. 
  */
-
+#pragma once
+#include "IDList.h"
 class IDSet{
   
  public:

@@ -40,7 +40,6 @@ diversion, business purpose, and etc..
 void Parameterization::setparameterization(char * inPLY2, char * outPLY2)
 {
 	Polyhedron *mymesh = new Polyhedron();
-	mymesh->readmesh(inPLY2);
 	
 
 	mymesh->param();
@@ -49,41 +48,45 @@ void Parameterization::setparameterization(char * inPLY2, char * outPLY2)
 void Parameterization::face_Parameterization(Model_PLY * ply, vector<int> faceIndexs)
 {
 	Polyhedron *mymesh = new Polyhedron();
-	//获取选择面片的数据
-	int i = 0;
-	float dx, dy, dz;
-	int di, dj, dk;
-	int pointNum,faceNum;
-	faceNum = faceIndexs.size();
-
-	//传入数据
-	//顶点
-	for (i = 0; i<ply->pointArry.size(); i++)
-	{
-		for (int j = 0; j < faceNum; j++)
-		{
-			for (int k = 0; k < ply->pointArry[i].beLongToFaceIndex.size();k++)
-			if (ply->pointArry[i].beLongToFaceIndex[k] == faceIndexs[j])
-			{
-				dx = ply->pointArry[i].x;
-				dy = ply->pointArry[i].y;
-				dz = ply->pointArry[i].z;
-				mymesh->setPoint(i, dx, dy, dz);
-			}
-		}	
+	FILE *in = NULL;
+	in = fopen("manneq1.ply2", "r");
+	int dV = 0;
+	int dF = 0;
+	int i, j;
+	int di = 0;
+	int dj = 0;
+	int dk = 0;
+	double dx = 0.0;
+	double dy = 0.0;
+	double dz = 0.0;
+	/*size_t ssize = fscanf(in, "%d", &dV);
+	ssize = fscanf(in, "%d", &dF);*/
+	dV = ply->pointArry.size();
+	dF = ply->faceArry.size();
+	mymesh->memoryallocate(dV, dF);
+	for (i = 0; i<mymesh->numberV; i++){
+		//ssize = fscanf(in, "%lf %lf %lf", &dx, &dy, &dz);
+		dx = ply->pointArry[i].x;
+		dy = ply->pointArry[i].y;
+		dz = ply->pointArry[i].z;
+		mymesh->setPoint(i, dx, dy, dz);
 	}
-	//面
-	for (i = 0; i < faceNum; i++)
-	{
-		di = ply->faceArry[faceIndexs[i]].ptnum[0];
-		dj = ply->faceArry[faceIndexs[i]].ptnum[1];
-		dk = ply->faceArry[faceIndexs[i]].ptnum[2];
+	int val = 3;
+	for (i = 0; i<mymesh->numberF; i++){
+		//ssize = fscanf(in, "%d %d %d %d", &val, &di, &dj, &dk);
+		di = ply->faceArry[i].ptnum[0];
+		dj = ply->faceArry[i].ptnum[1];
+		dk = ply->faceArry[i].ptnum[2];
 		mymesh->setFace(i, di, dj, dk);
 		mymesh->IDtool->AppendVFSort(i, mymesh->FHead[mymesh->Face[i][0]], mymesh->FTail[mymesh->Face[i][0]]);
 		mymesh->IDtool->AppendVFSort(i, mymesh->FHead[mymesh->Face[i][1]], mymesh->FTail[mymesh->Face[i][1]]);
 		mymesh->IDtool->AppendVFSort(i, mymesh->FHead[mymesh->Face[i][2]], mymesh->FTail[mymesh->Face[i][2]]);
 	}
+	fclose(in);
+	/* feature analysis */
+	mymesh->SetBoundaryLines();
+	mymesh->setAreaMap3D();
 
 	mymesh->param();
-	mymesh->writemesh("my_result.ply2");
+	mymesh->writemesh("newnew-cow_convert.ply2");
 }

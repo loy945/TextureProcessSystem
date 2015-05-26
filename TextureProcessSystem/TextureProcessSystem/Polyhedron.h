@@ -11,10 +11,7 @@ diversion, business purpose, and etc..
 #include "PointTool.h"
 #include "PolarList.h"
 #include "IDSet.h"
-#include "PCBCGSolver.h"
-#include "IDList.h"
-#include "Point3D.h"
-#include "Point2d.h"
+
 
 #define PI 3.1415926535897932385
 #define next(p) p->next
@@ -121,15 +118,17 @@ public:
 	void Polyhedron::BoundaryMap();
 	void Polyhedron::memorydelete();
 	void Polyhedron::memoryallocate(int dV, int dF);
-	void Polyhedron::setPoint(int i, double dx, double dy, double dz);
+	void Polyhedron::setPoint(int i, float dx, float dy, float dz);
 	void Polyhedron::SetBoundaryLines();
 	void Polyhedron::setFace(int i, int di, int dj, int dk);
 	void Polyhedron::setPolarMapNaturalB();
 	void Polyhedron::setPolarMap();
 	void Polyhedron::setAreaMap3D();
 	// U1 low stretch parameterization
+	void Polyhedron::ParametrizationOptimal(int itenum, double error);
 	void Polyhedron::ParametrizationSingle(int itenum, double error);
 	void Polyhedron::ParametrizationSmoothOptimal(int itenum, double error);
+
 	// compute natural boundary 
 	void Polyhedron::setNaturalB(int itenum, double error);
 	void Polyhedron::setEckHC();
