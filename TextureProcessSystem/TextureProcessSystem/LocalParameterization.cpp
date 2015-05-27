@@ -58,8 +58,6 @@ void LocalParameterization::init(Model_PLY * ply, vector<int> faceIndexs)
 void LocalParameterization::face_Parameterization(Model_PLY * ply, vector<int> faceIndexs)
 {
 	Polyhedron *mymesh = new Polyhedron();
-	FILE *in = NULL;
-	in = fopen("manneq1.ply2", "r");
 	int dV = 0;
 	int dF = 0;
 	int i, j;
@@ -69,36 +67,51 @@ void LocalParameterization::face_Parameterization(Model_PLY * ply, vector<int> f
 	double dx = 0.0;
 	double dy = 0.0;
 	double dz = 0.0;
-	/*size_t ssize = fscanf(in, "%d", &dV);
-	ssize = fscanf(in, "%d", &dF);*/
+	int ptNum = 0;
+	int index = 0;
+	int ptnum1 = 0;
+	int ptnum2 = 0;
+	int ptnum3 = 0;
 	dV = vvp->size();
 	dF = faceIndexs.size();
 	mymesh->memoryallocate(dV, dF);
 	for (i = 0; i<mymesh->numberV; i++){
-		//ssize = fscanf(in, "%lf %lf %lf", &dx, &dy, &dz);
-		dx = ply->pointArry[find1by2(i)].x;
-		dy = ply->pointArry[find1by2(i)].y;
-		dz = ply->pointArry[find1by2(i)].z;
+		ptNum = find1by2(i);
+		dx = ply->pointArry[ptNum].x;
+		dy = ply->pointArry[ptNum].y;
+		dz = ply->pointArry[ptNum].z;
 		mymesh->setPoint(i, dx, dy, dz);
 	}
 	int val = 3;
 	for (i = 0; i<mymesh->numberF; i++){
-		//ssize = fscanf(in, "%d %d %d %d", &val, &di, &dj, &dk);
-		di = find2by1(ply->faceArry[faceIndexs[i]].ptnum[0]);
-		dj = find2by1(ply->faceArry[faceIndexs[i]].ptnum[1]);
-		dk = find2by1(ply->faceArry[faceIndexs[i]].ptnum[2]);
+		index = faceIndexs[i];
+		ptnum1 = ply->faceArry[index].ptnum[0];
+		ptnum2 = ply->faceArry[index].ptnum[1];
+		ptnum3 = ply->faceArry[index].ptnum[2];
+		di = find2by1(ptnum1);
+		dj = find2by1(ptnum2);
+		dk = find2by1(ptnum3);
 		mymesh->setFace(i, di, dj, dk);
 		mymesh->IDtool->AppendVFSort(i, mymesh->FHead[mymesh->Face[i][0]], mymesh->FTail[mymesh->Face[i][0]]);
 		mymesh->IDtool->AppendVFSort(i, mymesh->FHead[mymesh->Face[i][1]], mymesh->FTail[mymesh->Face[i][1]]);
 		mymesh->IDtool->AppendVFSort(i, mymesh->FHead[mymesh->Face[i][2]], mymesh->FTail[mymesh->Face[i][2]]);
 	}
-	fclose(in);
+
+	FILE *out = fopen("pro-convert.ply2", "w");
+	fprintf(out, "%d\n", mymesh->numberV);
+	fprintf(out, "%d\n", mymesh->numberF);
+	for (i = 0; i<mymesh->numberV; i++){
+		fprintf(out, "%lf %lf %lf\n", mymesh->point[i]->x, mymesh->point[i]->y, mymesh->point[i]->z);
+	}
+	for (i = 0; i<mymesh->numberF; i++)
+		fprintf(out, "3 %d %d %d\n", mymesh->Face[i][0], mymesh->Face[i][1], mymesh->Face[i][2]);
+	fclose(out);
+
 	/* feature analysis */
 	mymesh->SetBoundaryLines();
 	mymesh->setAreaMap3D();
-
 	mymesh->param();
-	mymesh->writemesh("newnew-cow_convert.ply2");
+	mymesh->writemesh("after-convert.ply2");
 	for (i = 0; i<mymesh->numberV; i++)
 	{
 		ply->pointArry[find1by2(i)].u = mymesh->pU[i];
@@ -112,7 +125,7 @@ int LocalParameterization::find1by2(int index2)
 	for (int i = 0; i < vvp->size(); i++)
 	{
 		if (vvp->at(i)->index2 == index2)
-			return i;
+			return vvp->at(i)->index1;
 	}
 }
 int LocalParameterization::find2by1(int index1)
@@ -120,6 +133,6 @@ int LocalParameterization::find2by1(int index1)
 	for (int i = 0; i < vvp->size(); i++)
 	{
 		if (vvp->at(i)->index1 == index1)
-			return i;
+			return vvp->at(i)->index2;
 	}
 }

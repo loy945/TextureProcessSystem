@@ -9,9 +9,9 @@ Polyhedron::Polyhedron(){
 	// Default setting
 	pickID = -1;
 	paramtype = 2;
-	boundarytype = 0;
+	boundarytype = 2;
 	weighttype = 0;
-	iteNum = 200;
+	iteNum = 2000;
 	gammaP = 1.0;
 	PCBCGerror = pow(0.1, 6.0);
 	smooth = 1;

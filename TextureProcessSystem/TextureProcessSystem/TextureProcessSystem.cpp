@@ -339,20 +339,28 @@ void CTextureProcessSystemApp::Check()
 	it++;
 	}*/
 	vector<int> v;
-	v.push_back(0);
+	/*v.push_back(0);
 	v.push_back(2677);
 	v.push_back(2386);
 	v.push_back(2387);
 	pDoc->plyLoader.faceArry[0].parameterization = true;
 	pDoc->plyLoader.faceArry[2677].parameterization = true;
 	pDoc->plyLoader.faceArry[2386].parameterization = true;
-	pDoc->plyLoader.faceArry[2387].parameterization = true;
-	//for (int i = 0; i <pDoc->plyLoader.faceArry.size(); i++)
-	//{
-	//v.push_back(i);
-	//pDoc->plyLoader.faceArry[i].parameterization = true;
-	//}
-	//p1.face_Parameterization(&pDoc->plyLoader, v);
+	pDoc->plyLoader.faceArry[2387].parameterization = true;*/
+/*	for (int i = 0; i <pDoc->plyLoader.faceArry.size(); i++)
+	{
+	v.push_back(i);
+	pDoc->plyLoader.faceArry[i].parameterization = true;
+	}
+	*/
+	int it=0;
+	for (it = 0; it < pDoc->userSelectTriangleIndex.size(); it++)
+	{
+		int index=pDoc->userSelectTriangleIndex.at(it);
+		v.push_back(index);
+		pDoc->plyLoader.faceArry[index].parameterization = true;
+	}
+
 	LocalParameterization lp;
 	lp.init(&pDoc->plyLoader, v);
 		
