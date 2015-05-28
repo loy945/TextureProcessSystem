@@ -89,7 +89,8 @@ public:
 	//2015.5.21 
 	float offset[2];//偏移量
 	void calVertex2D(float pos[3],int index);//计算第index个三角形上点pos，投影后的坐标
-
+	void buildTexCoordByIndex(int index, int maxDeep);
+	void buildTexCoord(int index, vector<int>&v, int &deep, int maxDeep);
 // 重写
 public:
 	virtual BOOL OnNewDocument();

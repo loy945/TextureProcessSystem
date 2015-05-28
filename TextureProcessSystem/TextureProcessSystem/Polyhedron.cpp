@@ -10,8 +10,8 @@ Polyhedron::Polyhedron(){
 	pickID = -1;
 	paramtype = 2;
 	boundarytype = 2;
-	weighttype = 0;
-	iteNum = 2000;
+	weighttype = 4;
+	iteNum = 200;
 	gammaP = 1.0;
 	PCBCGerror = pow(0.1, 6.0);
 	smooth = 1;

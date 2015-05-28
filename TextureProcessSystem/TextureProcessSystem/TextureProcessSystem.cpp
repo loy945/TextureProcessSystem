@@ -313,14 +313,13 @@ void CTextureProcessSystemApp::Check()
 	/*pDoc->calTexCorByIndex(2387, 4);
 	pDoc->calTexCorByIndex(2386, 4);
 	pDoc->calTexCorByIndex(2677, 4);*/
-	/*
-	pDoc->calTexCorByIndex(3771, 8);
+	
+	/*pDoc->calTexCorByIndex(3771, 8);
 	pDoc->calTexCorByIndex(3682, 8);
 	pDoc->calTexCorByIndex(1670, 8);
 	pDoc->calTexCorByIndex(3700, 8);
-	pDoc->calTexCorByIndex(3771, 8);
 	pDoc->calTexCorByIndex(3702, 8);
-	pDoc->calTexCorByIndex(3773, 8);
+	//pDoc->calTexCorByIndex(3773, 8);
 	pDoc->calTexCorByIndex(3685, 8);
 		*/
 		
@@ -338,7 +337,7 @@ void CTextureProcessSystemApp::Check()
 
 	it++;
 	}*/
-	vector<int> v;
+	
 	/*v.push_back(0);
 	v.push_back(2677);
 	v.push_back(2386);
@@ -353,6 +352,7 @@ void CTextureProcessSystemApp::Check()
 	pDoc->plyLoader.faceArry[i].parameterization = true;
 	}
 	*/
+	/*vector<int> v;
 	int it=0;
 	for (it = 0; it < pDoc->userSelectTriangleIndex.size(); it++)
 	{
@@ -362,9 +362,9 @@ void CTextureProcessSystemApp::Check()
 	}
 
 	LocalParameterization lp;
-	lp.init(&pDoc->plyLoader, v);
-		
-		
+	lp.init(&pDoc->plyLoader, v);*/
+	pDoc->buildTexCoordByIndex(0, 4);
+	//pDoc->calTexCorByIndex(0, 8);
 
 	pDoc->logTex = true;
 	pDoc->show_ftep = false;

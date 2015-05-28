@@ -423,7 +423,21 @@ void gl_face::updateTexCoord()
 			return;
 			//越界
 		}*/
-
+		/*if (this->facenum == 1567)
+		{
+			int breakpoint = 0;
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if (!(texCoord.cor[i][j] == texCoord.cor[i][j] ))
+				{
+					return;
+					//越界
+				}
+			}
+		}*/
 		//更新纹理信息，压入队列
 		Point3fv3 * pt3fv3 = new Point3fv3();
 		pt3fv3->setValue(texCoord);

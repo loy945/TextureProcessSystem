@@ -18,6 +18,7 @@
 #include "highgui.h"
 #include <opencv2/opencv.hpp> 
 #include "PlaneRotate.h"
+#include "LocalParameterization.h"
 #define PI 3.1415926
 
 #define π 3.1415926
@@ -1221,7 +1222,7 @@ void CTextureProcessSystemDoc::alterFace2dCoord(int a,int d,int b,int c1,int c2,
 
 
 	/**********以上是面片顶点数据载入************/
-/*	
+
 	double kAB;
 	double kDE,kDF,kEF;//斜率k
 
@@ -1291,13 +1292,13 @@ void CTextureProcessSystemDoc::alterFace2dCoord(int a,int d,int b,int c1,int c2,
 	G[0]=((tan(k1)*B[0]-B[1])-(tan(k2)*A[0]-A[1]))/(tan(k1)-tan(k2));//新坐标x
 	//G[1]=k2*G[0]-(k2*A[0]-A[1]);//新坐标y
 	G[1]=(tan(k2)*(tan(k1)*B[0]-B[1])-tan(k1)*(tan(k2)*A[0]-A[1]))/(tan(k1)-tan(k2));
-*/
 
-	pr1->init(A[0],A[1],B[0],B[1],C[0],C[1],D[0],D[1],E[0],E[1],F[0],F[1]);
+
+	//pr1->init(A[0],A[1],B[0],B[1],C[0],C[1],D[0],D[1],E[0],E[1],F[0],F[1]);
 	//pr1->init(A[0],A[1],B[0],B[1],C[0],C[1],dd[0],dd[1],dd[2],ee[0],ee[1],ee[2],ff[0],ff[1],ff[2]);
-	pr1->getRes();
-	G[0]=pr1->resx;
-	G[1]=pr1->resy;
+	//pr1->getRes();
+	//G[0]=pr1->resx;
+	//G[1]=pr1->resy;
 	
 
 	Vertex2d->at(Triangle->at(a).ptnum_2d[b]).x=G[0];
@@ -1807,8 +1808,7 @@ void CTextureProcessSystemDoc::resetOuterTriangleTex()
 	}
 }
 // CTextureProcessSystemDoc 命令
-void CTextureProcessSystemDoc::calTexCor()
-{
+void CTextureProcessSystemDoc::calTexCor(){
 	vector<gl_face> * Triangle=&(plyLoader.faceArry);
 	int a,b,c1,c2,d,e1,e2;
 	if(toProcesseTriangleIndex.size()<=0)
@@ -2093,4 +2093,102 @@ void CTextureProcessSystemDoc::calVertex2D(float pos[3], int index)
 	}
 	
 
+}
+void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
+{
+	vector<int> v;
+	int deep = 1;
+	buildTexCoord(index, v, deep, maxDeep);
+	LocalParameterization lp;
+	lp.init(&plyLoader, v);
+	//确定缩放比例
+	float minCoord[3] = { 999, 999, 999 }; 
+	float maxCoord[3] = { -999, -999, -999 };
+	float coord[3];
+	//找出包围盒的对角点
+	for (int i = 0; i < v.size(); i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			coord[0] = plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].x;
+			coord[1] = plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].y;
+			coord[2] = plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].z;
+			for (int k = 0; k<3; k++)
+			{
+				if (coord[k]>maxCoord[k])
+				{
+					maxCoord[k] = coord[k];
+				}
+				if (coord[k]<minCoord[k])
+				{
+					minCoord[k] = coord[k];
+				}
+			}
+		}
+	}
+	//包围盒对角线长度
+	float sunLen = 0;
+	for (int k = 0; k < 3; k++)
+	{
+		sunLen += pow((maxCoord[k] - minCoord[k]), 2);
+	}
+	float lens3d = sqrtf(sunLen);
+	float kn = sqrtf(2) / lens3d ;
+
+	//确定偏移量
+	//纹理中心在纹理坐标中的具体位置
+	//不妨设，中心在中心平面的重心，则
+	Point3D centerPt;
+	Point3D pt[3];
+	for (int k = 0; k < 3; k++)
+	{
+		pt[k].x = plyLoader.pointArry[plyLoader.faceArry[v[0]].ptnum[k]].u;
+		pt[k].y = plyLoader.pointArry[plyLoader.faceArry[v[0]].ptnum[k]].v;
+	}
+	centerPt.x = (pt[0].x + pt[1].x + pt[2].x) / 3;
+	centerPt.y = (pt[0].y + pt[1].y + pt[2].y) / 3;
+	kn = 1;
+	/*centerPt.x = 0.5;
+	centerPt.y = 0.5;
+	*/ 
+	//直接添加纹理坐标
+	for (int i = 0; i < v.size(); i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			plyLoader.faceArry[v[i]].texCoord.cor[j][0] = plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].u*kn + (centerPt.x - 0.5)*kn;
+			plyLoader.faceArry[v[i]].texCoord.cor[j][1] = plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].v*kn + (centerPt.y - 0.5)*kn;
+		}		
+		plyLoader.faceArry[v[i]].texCoord.update = false;
+		plyLoader.faceArry[v[i]].updateTexCoord();
+	}
+}
+void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep,int maxDeep)
+{
+	//最多层为maxdeep的深度优先遍历
+	if (deep < maxDeep)
+	{
+		for (int i = 0; i < v.size(); i++)
+		{
+			if (index == v[i])
+			{
+				deep--;
+				return;
+			}
+		}
+		v.push_back(index);
+		int index1 = findFaceIndex(index, 0, 1);
+		int index2 = findFaceIndex(index, 1, 2);
+		int index3 = findFaceIndex(index, 2, 0);
+		deep++;
+		buildTexCoord(index1, v, deep, maxDeep);
+		deep++;
+		buildTexCoord(index2, v, deep, maxDeep);
+		deep++;
+		buildTexCoord(index3, v, deep, maxDeep);
+		deep--;
+		return;
+	}
+	deep--;
+	return;
 }

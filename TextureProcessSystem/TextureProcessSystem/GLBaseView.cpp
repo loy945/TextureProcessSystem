@@ -234,25 +234,6 @@ void CGLBaseView::drawPLYwithMultiTexture()
 			float v3z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].z;
 
 			float v1u, v1v, v2u, v2v, v3u, v3v;
-			if (Triangle->at(i).parameterization)
-			{
-				v1u = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].u;
-				v1v = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].v;
-				v2u = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].u;
-				v2v = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].v;
-				v3u = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].u;
-				v3v = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].v;
-
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, v1u, v1v);
-				glVertex3f(v1x, v1y, v1z);
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, v2u, v2v);
-				glVertex3f(v2x, v2y, v2z);
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, v3u, v3v);
-				glVertex3f(v3x, v3y, v3z);
-				
-				continue;
-			}
-
 			if (Triangle->at(i).texCoords.size()==0)
 				continue;
 			if (Triangle->at(i).texCoords.size() > 4)
