@@ -314,14 +314,14 @@ void CTextureProcessSystemApp::Check()
 	pDoc->calTexCorByIndex(2386, 4);
 	pDoc->calTexCorByIndex(2677, 4);*/
 	
-	/*pDoc->calTexCorByIndex(3771, 8);
+	pDoc->calTexCorByIndex(3771, 8);
 	pDoc->calTexCorByIndex(3682, 8);
 	pDoc->calTexCorByIndex(1670, 8);
 	pDoc->calTexCorByIndex(3700, 8);
 	pDoc->calTexCorByIndex(3702, 8);
 	//pDoc->calTexCorByIndex(3773, 8);
 	pDoc->calTexCorByIndex(3685, 8);
-		*/
+		
 		
 	//pDoc->calTexCorByIndex(0,1000);
 	//times++;
@@ -363,7 +363,9 @@ void CTextureProcessSystemApp::Check()
 
 	LocalParameterization lp;
 	lp.init(&pDoc->plyLoader, v);*/
-	pDoc->buildTexCoordByIndex(0, 4);
+	//pDoc->buildTexCoordByIndex(0, 8);
+	//pDoc->offset[0] = 0;
+	//pDoc->offset[1] = 0;
 	//pDoc->calTexCorByIndex(0, 8);
 
 	pDoc->logTex = true;

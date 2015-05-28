@@ -2147,17 +2147,15 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
 	}
 	centerPt.x = (pt[0].x + pt[1].x + pt[2].x) / 3;
 	centerPt.y = (pt[0].y + pt[1].y + pt[2].y) / 3;
-	kn = 1;
-	/*centerPt.x = 0.5;
-	centerPt.y = 0.5;
-	*/ 
+	kn = 4;
+
 	//直接添加纹理坐标
 	for (int i = 0; i < v.size(); i++)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			plyLoader.faceArry[v[i]].texCoord.cor[j][0] = plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].u*kn + (centerPt.x - 0.5)*kn;
-			plyLoader.faceArry[v[i]].texCoord.cor[j][1] = plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].v*kn + (centerPt.y - 0.5)*kn;
+			plyLoader.faceArry[v[i]].texCoord.cor[j][0] = (plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].u - centerPt.x)*kn + centerPt.x;
+			plyLoader.faceArry[v[i]].texCoord.cor[j][1] = (plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].v - centerPt.y)*kn + centerPt.y;
 		}		
 		plyLoader.faceArry[v[i]].texCoord.update = false;
 		plyLoader.faceArry[v[i]].updateTexCoord();
@@ -2166,7 +2164,7 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
 void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep,int maxDeep)
 {
 	//最多层为maxdeep的深度优先遍历
-	if (deep < maxDeep)
+	if (deep <= maxDeep)
 	{
 		for (int i = 0; i < v.size(); i++)
 		{
