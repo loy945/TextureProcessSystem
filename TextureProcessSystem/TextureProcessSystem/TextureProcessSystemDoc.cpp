@@ -22,7 +22,7 @@
 #define PI 3.1415926
 
 #define π 3.1415926
-#define λ 2
+#define λ 0.5
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

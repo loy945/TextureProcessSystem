@@ -55,6 +55,7 @@ public:
 	bool modelShowIn3Dor2D;//true代表显示三维模型 false显示展开到二维上的模型
 	void draw2DModel();
 	CBMPLoader m_texture[4];      /**< 载入4幅纹理 */
+	GLuint texture;
 	void DrawTest();
 
 public:

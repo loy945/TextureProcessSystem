@@ -280,94 +280,18 @@ void CTextureProcessSystemApp::Check()
 	int lastCount=0;
 	int tempCenter=0;
 	int newCenter=0;
-	double minCos=1;
-	//pDoc->calTexCorByIndex(0,1000);
-	//times++;
-	/*int it=0;
-	while(it<pDoc->userSelectTriangleIndex.size())
-	{
-
-		int index=pDoc->userSelectTriangleIndex.at(it);
-		pDoc->offset[0] = 0;
-		pDoc->offset[1] = 0;
-		pDoc->calTexCorByIndex(index,8);
-		times++;
-		
-		it++;
-	}*/
-	
-	
-	
+	double minCos=1;	
 	//为每个基元贴图
-	/*ofstream f("triangleIndex.txt");
+	ofstream f("triangleIndex.txt");
 	for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
 		//pDoc->texGenTime++;
+		if (!pDoc->_ftep->m_targetTexture->tes[i]->isShow) continue;
 		pDoc->calVertex2D(pDoc->_ftep->m_targetTexture->tes[i]->pos, pDoc->_ftep->m_targetTexture->tes[i]->face->facenum);
 		f << pDoc->_ftep->m_targetTexture->tes[i]->face->facenum << endl;
 		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
 	}
-	f.close();*/
-	//pDoc->texGenTime = 1;
-	//pDoc->calTexCorByIndex(0, 40);
-	/*pDoc->calTexCorByIndex(2387, 4);
-	pDoc->calTexCorByIndex(2386, 4);
-	pDoc->calTexCorByIndex(2677, 4);*/
-	
-	pDoc->calTexCorByIndex(3771, 8);
-	pDoc->calTexCorByIndex(3682, 8);
-	pDoc->calTexCorByIndex(1670, 8);
-	pDoc->calTexCorByIndex(3700, 8);
-	pDoc->calTexCorByIndex(3702, 8);
-	//pDoc->calTexCorByIndex(3773, 8);
-	pDoc->calTexCorByIndex(3685, 8);
-		
-		
-	//pDoc->calTexCorByIndex(0,1000);
-	//times++;
-	/*int it=0;
-	while(it<pDoc->userSelectTriangleIndex.size())
-	{
-
-	int index=pDoc->userSelectTriangleIndex.at(it);
-	pDoc->offset[0] = 0;
-	pDoc->offset[1] = 0;
-	pDoc->calTexCorByIndex(index,8);
-	times++;
-
-	it++;
-	}*/
-	
-	/*v.push_back(0);
-	v.push_back(2677);
-	v.push_back(2386);
-	v.push_back(2387);
-	pDoc->plyLoader.faceArry[0].parameterization = true;
-	pDoc->plyLoader.faceArry[2677].parameterization = true;
-	pDoc->plyLoader.faceArry[2386].parameterization = true;
-	pDoc->plyLoader.faceArry[2387].parameterization = true;*/
-/*	for (int i = 0; i <pDoc->plyLoader.faceArry.size(); i++)
-	{
-	v.push_back(i);
-	pDoc->plyLoader.faceArry[i].parameterization = true;
-	}
-	*/
-	/*vector<int> v;
-	int it=0;
-	for (it = 0; it < pDoc->userSelectTriangleIndex.size(); it++)
-	{
-		int index=pDoc->userSelectTriangleIndex.at(it);
-		v.push_back(index);
-		pDoc->plyLoader.faceArry[index].parameterization = true;
-	}
-
-	LocalParameterization lp;
-	lp.init(&pDoc->plyLoader, v);*/
-	//pDoc->buildTexCoordByIndex(0, 8);
-	//pDoc->offset[0] = 0;
-	//pDoc->offset[1] = 0;
-	//pDoc->calTexCorByIndex(0, 8);
-
+	f.close();
 	pDoc->logTex = true;
 	pDoc->show_ftep = false;
 }
