@@ -22,7 +22,7 @@
 #define PI 3.1415926
 
 #define π 3.1415926
-#define λ 0.5
+#define λ 2
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -2147,7 +2147,7 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
 	}
 	centerPt.x = (pt[0].x + pt[1].x + pt[2].x) / 3;
 	centerPt.y = (pt[0].y + pt[1].y + pt[2].y) / 3;
-	kn = 4;
+	kn = 8;
 
 	//直接添加纹理坐标
 	for (int i = 0; i < v.size(); i++)

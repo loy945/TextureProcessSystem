@@ -282,7 +282,7 @@ void CTextureProcessSystemApp::Check()
 	int newCenter=0;
 	double minCos=1;	
 	//为每个基元贴图
-	ofstream f("triangleIndex.txt");
+	/*ofstream f("triangleIndex.txt");
 	for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
 		//pDoc->texGenTime++;
@@ -291,9 +291,25 @@ void CTextureProcessSystemApp::Check()
 		f << pDoc->_ftep->m_targetTexture->tes[i]->face->facenum << endl;
 		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
 	}
-	f.close();
+	f.close();*/
+	
+	
+	
+	pDoc->calTexCorByIndex(1585, 8);
+	pDoc->calTexCorByIndex(1587, 8);
+	pDoc->calTexCorByIndex(3700, 8);
+	pDoc->calTexCorByIndex(3786, 8);
+	pDoc->calTexCorByIndex(1690, 8);
+	pDoc->calTexCorByIndex(3701, 8);
+	
+	/*pDoc->buildTexCoordByIndex(1585, 4);
+	pDoc->buildTexCoordByIndex(1587, 4);
+	pDoc->buildTexCoordByIndex(3700, 4);
+	pDoc->buildTexCoordByIndex(3786, 4);
+	pDoc->buildTexCoordByIndex(1690, 4);
+	pDoc->buildTexCoordByIndex(3701, 4);*/
 	pDoc->logTex = true;
-	pDoc->show_ftep = false;
+	pDoc->show_ftep = false; 
 }
 
 
