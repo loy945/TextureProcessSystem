@@ -254,8 +254,7 @@ void CGLBaseView::drawPLYwithMultiTexture()
 				}
 				continue;
 			}
-			glClearColor(1.0, 1.0, 1.0, 1.0);
-			int time = 2;
+
 			switch (Triangle->at(i).texCoords.size())
 			{
 			case 4:
@@ -334,6 +333,7 @@ void CGLBaseView::drawPLY()
 	int i;
 	int a = 3;
 	glColor3f(0.5, 0.5, 0.5);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//网格模式
 	glBegin(GL_TRIANGLES);//显示模型的面
 	for (int i = 0; i < m_pDoc->plyLoader.faceArry.size(); i++)
 	{
@@ -790,10 +790,10 @@ void CGLBaseView::DrawScene()
 		{
 			//m_pDoc->plyLoader.Draw();
 
-			drawPLY();
+			
 
 			drawPLYwithMultiTexture();
-
+			drawPLY();
 		
 		
 			glFlush();
