@@ -221,6 +221,7 @@ void CGLBaseView::drawPLYwithMultiTexture()
 	glBegin(GL_TRIANGLES);//显示
 	for (int i = 0; i < m_pDoc->plyLoader.faceArry.size(); i++)
 	{
+	
 		float v1x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].x;
 		float v1y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].y;
 		float v1z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].z;
@@ -236,6 +237,15 @@ void CGLBaseView::drawPLYwithMultiTexture()
 		float v1u, v1v, v2u, v2v, v3u, v3v;
 		if (Triangle->at(i).texCoords.size() > 1)
 		{
+			if (i != 1583)
+			{
+				continue;
+			}
+			else
+			{
+				int breakPoint = 0;
+			}
+
 			if (Triangle->at(i).texCoords.size() > 4)
 			{
 				if (m_pDoc->logTex)
@@ -791,9 +801,9 @@ void CGLBaseView::DrawScene()
 			//m_pDoc->plyLoader.Draw();
 
 			
-
-			drawPLYwithMultiTexture();
-			drawPLY();
+			DrawTest();
+			//drawPLYwithMultiTexture();
+			//drawPLY();
 		
 		
 			glFlush();
@@ -1040,108 +1050,184 @@ bool CGLBaseView::IntersectTriangle(vector<gl_face> facetarry, vector<gl_point> 
 }
 void CGLBaseView::DrawTest()
 {
-	glPushMatrix();
-	glTranslatef(trans_X, trans_Y, trans_Z);
-
-	glScalef(scale_X*1.0f, scale_Y*1.0f, scale_Z*1.0f);
-
-	glRotatef(rotate_X, 1.0f, 0.0f, 0.0f);
-	glRotatef(rotate_Y, 0.0f, 1.0f, 0.0f);
 
 
+	vector<gl_face> * Triangle = &(m_pDoc->plyLoader.faceArry);
+	vector<gl_point> * Vertex = &(m_pDoc->plyLoader.pointArry);
+	vector<gl_point2d> * Vertex2d = &(m_pDoc->plyLoader.point2DArry);
+	if (m_pDoc->plyLoader.pointArry[Triangle->at(0).ptnum[0]].x<-4e+8)
+	{
+		AfxMessageBox("model data is null");
+		exit(-1);
+	}
+	int i;
+	int a = 3;
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glGetIntegerv(GL_VIEWPORT, viewport); // 得到的是最后一个设置视口的参数
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-	glGetDoublev(GL_PROJECTION_MATRIX, projection);
-
-	/** 用户自定义的绘制过程 */
-	
-	/** 激活纹理0,并绑定纹理 */
+	/* 激活纹理0,并绑定纹理 */
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_texture[0].ID);
-
-	/** 激活纹理1,并绑定纹理 */
+	/* 激活纹理1,并绑定纹理 */
 	glActiveTextureARB(GL_TEXTURE1_ARB);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_texture[1].ID);
+	/* 激活纹理2,并绑定纹理 */
+	glActiveTextureARB(GL_TEXTURE2_ARB);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, m_texture[2].ID);
+	/* 激活纹理3,并绑定纹理 */
+	glActiveTextureARB(GL_TEXTURE3_ARB);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, m_texture[3].ID);
 
-	/** 绘制一个四方形墙面 */
-	glPushMatrix();
-	glTranslatef(-2.5, 0, 0);
-	glScalef(2.0f, 2.0f, 2.0f);
-	glBegin(GL_QUADS);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glColor3f(1, 1, 1);
+	glBegin(GL_TRIANGLES);//显示
+	//for (int i = 0; i < m_pDoc->plyLoader.faceArry.size(); i++)
+	i = 1583;
+	{
+		float v1x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].x;
+		float v1y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].y;
+		float v1z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].z;
 
-	/** 左上点 */
-	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 0.0f, 1.0f);
-	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 0.0f, 1.0f);
-	glVertex3f(-1, 1, 0);
+		float v2x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].x;
+		float v2y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].y;
+		float v2z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].z;
 
-	/** 左下点 */
-	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 0.0f, 0.0f);
-	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 0.0f, 0.0f);
-	glVertex3f(-1, -1, 0);
+		float v3x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].x;
+		float v3y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].y;
+		float v3z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].z;
 
-	/** 右下点 */
-	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.0f, 0.0f);
-	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 1.0f, 0.0f);
-	glVertex3f(1, -1, 0);
+		float v1u, v1v, v2u, v2v, v3u, v3v;
+		if (Triangle->at(i).texCoords.size() > 1)
+		{
+			//glMultiTexCoord2fARB(GL_TEXTURE1_ARB,-0.977837, 1.83931);
+			glMultiTexCoord2fARB(GL_TEXTURE0_ARB, -0.481086, 3.46014);
+			glVertex3f(v1x, v1y, v1z);
+			//glMultiTexCoord2fARB(GL_TEXTURE1_ARB, -1.15839, 0.299139);
+			glMultiTexCoord2fARB(GL_TEXTURE0_ARB, -0.711902, 2.02152);
+			glVertex3f(v2x, v2y, v2z);
+			//glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 1.72436, -1.32363);
+			glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.92963, 0.383392);
+			glVertex3f(v3x, v3y, v3z);
+		}
+	}
+	glEnd();
+	glActiveTextureARB(GL_TEXTURE0_ARB);
+	glDisable(GL_TEXTURE_2D);
+	glActiveTextureARB(GL_TEXTURE1_ARB);
+	glDisable(GL_TEXTURE_2D);
+	glActiveTextureARB(GL_TEXTURE2_ARB);
+	glDisable(GL_TEXTURE_2D);
+	glActiveTextureARB(GL_TEXTURE3_ARB);
+	glDisable(GL_TEXTURE_2D);
 
-	/** 右上点 */
-	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.0f, 1.0f);
-	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 1.0f, 1.0f);
-	glVertex3f(1, 1, 0);
-
-	glEnd();    /**< 绘制结束 */
-	glPopMatrix();
+		
+		
 
 
+	//glPushMatrix();
+	//glTranslatef(trans_X, trans_Y, trans_Z);
+
+	//glScalef(scale_X*1.0f, scale_Y*1.0f, scale_Z*1.0f);
+
+	//glRotatef(rotate_X, 1.0f, 0.0f, 0.0f);
+	//glRotatef(rotate_Y, 0.0f, 1.0f, 0.0f);
+
+
+
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//glGetIntegerv(GL_VIEWPORT, viewport); // 得到的是最后一个设置视口的参数
+	//glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	//glGetDoublev(GL_PROJECTION_MATRIX, projection);
+
+	///** 用户自定义的绘制过程 */
+	//
 	///** 激活纹理0,并绑定纹理 */
 	//glActiveTextureARB(GL_TEXTURE0_ARB);
 	//glEnable(GL_TEXTURE_2D);
-	//glBindTexture(GL_TEXTURE_2D,  m_texture[2].ID);
+	//glBindTexture(GL_TEXTURE_2D, m_texture[0].ID);
 
 	///** 激活纹理1,并绑定纹理 */
 	//glActiveTextureARB(GL_TEXTURE1_ARB);
-	//
-	///** 如果多重纹理启用,则启用该纹理 */
-	//if (multitexturing) 
-	//	glEnable(GL_TEXTURE_2D); 
-	//else 
-	//	glDisable(GL_TEXTURE_2D);
-	//glBindTexture(GL_TEXTURE_2D,  m_texture[3].ID);
+	//glEnable(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, m_texture[1].ID);
 
-	//static float wrap = 0;      /**< 用于雾的流动 */     
-
-	//glTranslatef(2.5, 0, 0);
-	//glScalef(2.0f,2.0f,2.0f);
+	///** 绘制一个四方形墙面 */
+	//glPushMatrix();
+	//glTranslatef(-2.5, 0, 0);
+	//glScalef(2.0f, 2.0f, 2.0f);
 	//glBegin(GL_QUADS);
 
-	//	/** 左上点 */
-	//	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 0.0f, 1.0f);
-	//	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 0.0f - wrap, 1.0f);
-	//	glVertex3f(-1, 1, 0);
+	///** 左上点 */
+	//glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 0.0f, 1.0f);
+	//glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 0.0f, 1.0f);
+	//glVertex3f(-1, 1, 0);
 
-	//	/** 左下点 */
-	//	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 0.0f, 0.0f);
-	//	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 0.0f - wrap, 0.0f);
-	//	glVertex3f(-1, -1, 0);
+	///** 左下点 */
+	//glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 0.0f, 0.0f);
+	//glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 0.0f, 0.0f);
+	//glVertex3f(-1, -1, 0);
 
-	//	/** 右下点 */
-	//	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.0f, 0.0f);
-	//	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 1.0f - wrap, 0.0f);
-	//	glVertex3f(1, -1, 0);
+	///** 右下点 */
+	//glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.0f, 0.0f);
+	//glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 1.0f, 0.0f);
+	//glVertex3f(1, -1, 0);
 
-	//	/** 右上点 */
-	//	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.0f, 1.0f);
-	//	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 1.0f - wrap, 1.0f);
-	//	glVertex3f(1, 1, 0);
-	//glEnd();											
+	///** 右上点 */
+	//glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.0f, 1.0f);
+	//glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 1.0f, 1.0f);
+	//glVertex3f(1, 1, 0);
 
-	//wrap += 0.001f;                   /**< 递增 */
+	//glEnd();    /**< 绘制结束 */
+	//glPopMatrix();
 
 
-	glFlush();	                     /**< 强制执行所有的OpenGL命令 */
+	/////** 激活纹理0,并绑定纹理 */
+	////glActiveTextureARB(GL_TEXTURE0_ARB);
+	////glEnable(GL_TEXTURE_2D);
+	////glBindTexture(GL_TEXTURE_2D,  m_texture[2].ID);
+
+	/////** 激活纹理1,并绑定纹理 */
+	////glActiveTextureARB(GL_TEXTURE1_ARB);
+	////
+	/////** 如果多重纹理启用,则启用该纹理 */
+	////if (multitexturing) 
+	////	glEnable(GL_TEXTURE_2D); 
+	////else 
+	////	glDisable(GL_TEXTURE_2D);
+	////glBindTexture(GL_TEXTURE_2D,  m_texture[3].ID);
+
+	////static float wrap = 0;      /**< 用于雾的流动 */     
+
+	////glTranslatef(2.5, 0, 0);
+	////glScalef(2.0f,2.0f,2.0f);
+	////glBegin(GL_QUADS);
+
+	////	/** 左上点 */
+	////	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 0.0f, 1.0f);
+	////	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 0.0f - wrap, 1.0f);
+	////	glVertex3f(-1, 1, 0);
+
+	////	/** 左下点 */
+	////	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 0.0f, 0.0f);
+	////	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 0.0f - wrap, 0.0f);
+	////	glVertex3f(-1, -1, 0);
+
+	////	/** 右下点 */
+	////	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.0f, 0.0f);
+	////	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 1.0f - wrap, 0.0f);
+	////	glVertex3f(1, -1, 0);
+
+	////	/** 右上点 */
+	////	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.0f, 1.0f);
+	////	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 1.0f - wrap, 1.0f);
+	////	glVertex3f(1, 1, 0);
+	////glEnd();											
+
+	////wrap += 0.001f;                   /**< 递增 */
+
+
+	//glFlush();	                     /**< 强制执行所有的OpenGL命令 */
 }

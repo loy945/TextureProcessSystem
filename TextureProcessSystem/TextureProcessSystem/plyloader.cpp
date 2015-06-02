@@ -490,13 +490,18 @@ void gl_face::updateTexCoord()
 		ptb[2].setValue(Point3D(1, 1, 0));
 		ptb[3].setValue(Point3D(1, 0, 0));
 
-		for (i = 0; i < 4; i++)
+		if (!addIn)
 		{
-			if (tri1->isAPointInTriangle(ptb[i]))
+			for (i = 0; i < 4; i++)
 			{
-				addIn = true;
+				if (!tri1->isAPointInTriangle(ptb[i]))
+				{
+					return;
+				}
 			}
+			addIn = true;
 		}
+		
 
 
 		if (!addIn) return;

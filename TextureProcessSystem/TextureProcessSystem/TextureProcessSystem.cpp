@@ -281,7 +281,7 @@ void CTextureProcessSystemApp::Check()
 	int tempCenter=0;
 	int newCenter=0;
 	double minCos=1;	
-	//为每个基元贴图
+	/*//为每个基元贴图
 	ofstream f("triangleIndex.txt");
 	for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
@@ -291,7 +291,22 @@ void CTextureProcessSystemApp::Check()
 		f << pDoc->_ftep->m_targetTexture->tes[i]->face->facenum << endl;
 		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
 	}
-	f.close();
+	f.close();*/
+	pDoc->calTexCorByIndex(3700, 8);
+	pDoc->calTexCorByIndex(3769, 8);
+	pDoc->calTexCorByIndex(3698, 8);
+	pDoc->calTexCorByIndex(3700, 8);
+	pDoc->calTexCorByIndex(1584, 8);
+	pDoc->calTexCorByIndex(3787, 8);
+	pDoc->calTexCorByIndex(3702, 8);
+	pDoc->calTexCorByIndex(3771, 8);
+		
+		
+		
+		
+		
+		
+
 	pDoc->logTex = true;
 	pDoc->show_ftep = false;
 }
