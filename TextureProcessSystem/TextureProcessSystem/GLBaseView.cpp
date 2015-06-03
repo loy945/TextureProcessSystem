@@ -7,6 +7,8 @@
 #include "plyloader.h"
 #include "FindTextureElementPosition.h"
 #include "CBMPLoader.h"
+#include <fstream>
+using namespace std;
 // CGLBaseView
 
 IMPLEMENT_DYNCREATE(CGLBaseView, CView)
@@ -21,6 +23,10 @@ CGLBaseView::CGLBaseView()
 
 	isInit=false;
 	modelShowIn3Dor2D=true;
+	ofstream f("warnlog.txt");
+	f.close();
+	ofstream f1("texlog.txt");
+	f1.close();
 }
 
 CGLBaseView::~CGLBaseView()
@@ -177,6 +183,7 @@ int CGLBaseView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 	LoadGLTextures();
+	
 	return 0;
 }
 void CGLBaseView::drawPLYwithMultiTexture()
@@ -184,73 +191,161 @@ void CGLBaseView::drawPLYwithMultiTexture()
 	vector<gl_face> * Triangle = &(m_pDoc->plyLoader.faceArry);
 	vector<gl_point> * Vertex = &(m_pDoc->plyLoader.pointArry);
 	vector<gl_point2d> * Vertex2d = &(m_pDoc->plyLoader.point2DArry);
-	if (m_pDoc->plyLoader.pointArry[Triangle->at(0).ptnum[0]].x<-4e+8)
-	{
-		AfxMessageBox("model data is null");
-		exit(-1);
-	}
-	int i;
-	int a = 3;
 	
-	/** 激活纹理0,并绑定纹理 */
-	glActiveTextureARB(GL_TEXTURE0_ARB);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, m_texture[0].ID);
-
-	/** 激活纹理1,并绑定纹理 */
-	glActiveTextureARB(GL_TEXTURE1_ARB);
-	glEnable(GL_TEXTURE_2D);
-	glDisable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, m_texture[1].ID);
-
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glColor3f(1, 1, 1);
-	glBegin(GL_TRIANGLES);//显示
-	for (int i = 0; i<m_pDoc->plyLoader.faceArry.size(); i++)
+	for (int i = 0; i < m_pDoc->plyLoader.faceArry.size(); i++)
 	{
-			float v1x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].x;
-			float v1y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].y;
-			float v1z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].z;
+		float v1x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].x;
+		float v1y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].y;
+		float v1z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].z;
 
-			float v2x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].x;
-			float v2y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].y;
-			float v2z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].z;
+		float v2x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].x;
+		float v2y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].y;
+		float v2z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[1]].z;
 
-			float v3x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].x;
-			float v3y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].y;
-			float v3z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].z;
+		float v3x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].x;
+		float v3y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].y;
+		float v3z = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[2]].z;
 
-			glClearColor(1.0, 1.0,1.0, 1.0);
-			if (Triangle->at(i).texCoords.size() > 1)
+		float v1u, v1v, v2u, v2v, v3u, v3v;
+		if (Triangle->at(i).texCoords.size() > 0)
+		{
+			//重叠区域大于4层，警告信息
+			if (Triangle->at(i).texCoords.size() > 4)
 			{
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[0]->cor[0][0], Triangle->at(i).texCoords[0]->cor[0][1]);
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[1]->cor[0][0], Triangle->at(i).texCoords[1]->cor[0][1]);
-				glVertex3f(v1x, v1y, v1z);
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[0]->cor[1][0], Triangle->at(i).texCoords[0]->cor[1][1]);
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[1]->cor[1][0], Triangle->at(i).texCoords[1]->cor[1][1]);
-				glVertex3f(v2x, v2y, v2z);
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[0]->cor[2][0], Triangle->at(i).texCoords[0]->cor[2][1]);
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[1]->cor[2][0], Triangle->at(i).texCoords[1]->cor[2][1]);
-				glVertex3f(v3x, v3y, v3z);
+				if (m_pDoc->logTex)
+				{
+					ofstream f("warnlog.txt", ios::app);
+					f << endl;
+					f << "Triangle" << i << " texCoords.size: " << Triangle->at(i).texCoords.size() << endl;
+					for (int k = 0; k < Triangle->at(i).texCoords.size(); k++)
+					{
+						f << Triangle->at(i).texCoords[k]->cor[0][0] << "," << Triangle->at(i).texCoords[k]->cor[0][1] << endl;
+						f << Triangle->at(i).texCoords[k]->cor[1][0] << "," << Triangle->at(i).texCoords[k]->cor[1][1] << endl;
+						f << Triangle->at(i).texCoords[k]->cor[2][0] << "," << Triangle->at(i).texCoords[k]->cor[2][1] << endl;
+					}
+					f << endl;
+					f.close();
+				}
+				continue;
 			}
-			 else if (Triangle->at(i).texCoords.size() > 0)
+
+			switch (Triangle->at(i).texCoords.size())
 			{
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[0]->cor[0][0], Triangle->at(i).texCoords[0]->cor[0][1]);
-				glVertex3f(v1x, v1y, v1z);
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[0]->cor[1][0], Triangle->at(i).texCoords[0]->cor[1][1]);
-				glVertex3f(v2x, v2y, v2z);
-				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[0]->cor[2][0], Triangle->at(i).texCoords[0]->cor[2][1]);
-				glVertex3f(v3x, v3y, v3z);
+			case 4:
+			{		 /* 激活纹理3,并绑定纹理 */
+					  glActiveTextureARB(GL_TEXTURE3_ARB);
+					  glEnable(GL_TEXTURE_2D);
+					  glBindTexture(GL_TEXTURE_2D, m_texture[3].ID);
 			}
-	}
-	glEnd();
-	glActiveTextureARB(GL_TEXTURE0_ARB);
-	glDisable(GL_TEXTURE_2D);
-	glActiveTextureARB(GL_TEXTURE1_ARB);
-	glDisable(GL_TEXTURE_2D);
+			case 3:
+			{		/* 激活纹理2,并绑定纹理 */
+					  glActiveTextureARB(GL_TEXTURE2_ARB);
+					  glEnable(GL_TEXTURE_2D);
+					  glBindTexture(GL_TEXTURE_2D, m_texture[2].ID);
+			}
+			case 2:
+			{		  /* 激活纹理1,并绑定纹理 */
+					  glActiveTextureARB(GL_TEXTURE1_ARB);
+					  glEnable(GL_TEXTURE_2D);
+					  glBindTexture(GL_TEXTURE_2D, m_texture[1].ID);
+			}
+			case 1:
+			{		  /* 激活纹理0,并绑定纹理 */
+					  glActiveTextureARB(GL_TEXTURE0_ARB);
+					  glEnable(GL_TEXTURE_2D);
+					  glBindTexture(GL_TEXTURE_2D, m_texture[0].ID);
+			}
+			}
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glColor3f(1, 1, 1);
+			glBegin(GL_TRIANGLES);//显示
+			switch (Triangle->at(i).texCoords.size())
+			{
+			case 4:
+				glMultiTexCoord2fARB(GL_TEXTURE3_ARB, Triangle->at(i).texCoords[3]->cor[0][0], Triangle->at(i).texCoords[3]->cor[0][1]);
+			case 3:
+				glMultiTexCoord2fARB(GL_TEXTURE2_ARB, Triangle->at(i).texCoords[2]->cor[0][0], Triangle->at(i).texCoords[2]->cor[0][1]);
+			case 2:
+				glMultiTexCoord2fARB(GL_TEXTURE1_ARB, Triangle->at(i).texCoords[1]->cor[0][0], Triangle->at(i).texCoords[1]->cor[0][1]);
+			case 1:
+				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[0]->cor[0][0], Triangle->at(i).texCoords[0]->cor[0][1]);
+			}
+			glVertex3f(v1x, v1y, v1z);
+			switch (Triangle->at(i).texCoords.size())
+			{
+			case 4:
+				glMultiTexCoord2fARB(GL_TEXTURE3_ARB, Triangle->at(i).texCoords[3]->cor[1][0], Triangle->at(i).texCoords[3]->cor[1][1]);
+			case 3:
+				glMultiTexCoord2fARB(GL_TEXTURE2_ARB, Triangle->at(i).texCoords[2]->cor[1][0], Triangle->at(i).texCoords[2]->cor[1][1]);
+			case 2:
+				glMultiTexCoord2fARB(GL_TEXTURE1_ARB, Triangle->at(i).texCoords[1]->cor[1][0], Triangle->at(i).texCoords[1]->cor[1][1]);
+			case 1:
+				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[0]->cor[1][0], Triangle->at(i).texCoords[0]->cor[1][1]);
+			}
+			glVertex3f(v2x, v2y, v2z);
+			switch (Triangle->at(i).texCoords.size())
+			{
+			case 4:
+				glMultiTexCoord2fARB(GL_TEXTURE3_ARB, Triangle->at(i).texCoords[3]->cor[2][0], Triangle->at(i).texCoords[3]->cor[2][1]);
+			case 3:
+				glMultiTexCoord2fARB(GL_TEXTURE2_ARB, Triangle->at(i).texCoords[2]->cor[2][0], Triangle->at(i).texCoords[2]->cor[2][1]);
+			case 2:
+				glMultiTexCoord2fARB(GL_TEXTURE1_ARB, Triangle->at(i).texCoords[1]->cor[2][0], Triangle->at(i).texCoords[1]->cor[2][1]);
+			case 1:
+				glMultiTexCoord2fARB(GL_TEXTURE0_ARB, Triangle->at(i).texCoords[0]->cor[2][0], Triangle->at(i).texCoords[0]->cor[2][1]);
+			}
+			glVertex3f(v3x, v3y, v3z);
+		}
+		if (Triangle->at(i).texCoords.size() > 0)
+		{
+			if (m_pDoc->logTex)
+			{
+				ofstream f("texlog.txt", ios::app);
+				f << "Triangle  " << i << endl;
+				for (int k = 0; k < Triangle->at(i).texCoords.size(); k++)
+				{
+					f << Triangle->at(i).texCoords[k]->cor[0][0] << "," << Triangle->at(i).texCoords[k]->cor[0][1] << endl;
+					f << Triangle->at(i).texCoords[k]->cor[1][0] << "," << Triangle->at(i).texCoords[k]->cor[1][1] << endl;
+					f << Triangle->at(i).texCoords[k]->cor[2][0] << "," << Triangle->at(i).texCoords[k]->cor[2][1] << endl;
+				}
+				f << endl;
+				f.close();
+			}
+		}
+		glEnd();
+		switch (Triangle->at(i).texCoords.size())
+		{
+		case 4:
+		{		
+				  glActiveTextureARB(GL_TEXTURE3_ARB);
+				  glDisable(GL_TEXTURE_2D);
+		}
+		case 3:
+		{
+				  glActiveTextureARB(GL_TEXTURE2_ARB);
+				  glDisable(GL_TEXTURE_2D);
+		}
+		case 2:
+		{
+				  glActiveTextureARB(GL_TEXTURE1_ARB);
+				  glDisable(GL_TEXTURE_2D);
+		}
+		case 1:
+		{
+				  glActiveTextureARB(GL_TEXTURE0_ARB);
+				  glDisable(GL_TEXTURE_2D);
+		}
+		}
+
 	
+	
+	}
+
+	glFlush();
+	m_pDoc->logTex = false;
+
 }
+
 void CGLBaseView::drawPLY()
 {
 
@@ -266,7 +361,7 @@ void CGLBaseView::drawPLY()
 	int a = 3;
 	glColor3f(0.5, 0.5, 0.5);
 	glBegin(GL_TRIANGLES);//显示模型的面
-	for (int i = 0; i<m_pDoc->plyLoader.faceArry.size(); i++)
+	for (int i = 0; i < m_pDoc->plyLoader.faceArry.size(); i++)
 	{
 		float v1x = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].x;
 		float v1y = m_pDoc->plyLoader.pointArry[Triangle->at(i).ptnum[0]].y;
@@ -282,23 +377,11 @@ void CGLBaseView::drawPLY()
 
 		if (Triangle->at(i).texCoords.size() == 0)
 		{
-			if (v1x<-4e+8)
+			if (v1x < -4e+8)
 				break;
-			/*if (Triangle->at(i).isShowColorIn3D)
-			{
-				glColor3f(Triangle->at(i).r, Triangle->at(i).g, Triangle->at(i).b);
-			}
-			else
-			{
-				glColor3f(0.5, 0.5, 0.5);//灰色
-			}*/
-			glTexCoord2f(Triangle->at(i).texCoord.cor[0][0], Triangle->at(i).texCoord.cor[0][1]);
 			glVertex3f(v1x, v1y, v1z);
-			glTexCoord2f(Triangle->at(i).texCoord.cor[1][0], Triangle->at(i).texCoord.cor[1][1]);
 			glVertex3f(v2x, v2y, v2z);
-			glTexCoord2f(Triangle->at(i).texCoord.cor[2][0], Triangle->at(i).texCoord.cor[2][1]);
 			glVertex3f(v3x, v3y, v3z);
-			
 		}
 	}
 	glEnd();
@@ -384,7 +467,8 @@ void CGLBaseView::OnMouseMove(UINT nFlags, CPoint point)
 
 BOOL CGLBaseView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	// TODO:  在此添加消息处理程序代码和/或调用默认值		texCoorGenTime	0	int
+
 	if (zDelta > 0)//向前滚动，放大
 	{
 		scale_X = float(((zDelta / 120) + 0.1)*scale_X);
@@ -566,7 +650,7 @@ void CGLBaseView::makeCheckImage(void)
 void CGLBaseView::LoadGLTextures()
 {
 	/// 文件名 
-	char* fileName[4] = { "wall.bmp", "lightmap.bmp", "bitmap.bmp", "fog.bmp" };
+	char* fileName[4] = { "wall2.bmp", "wall2.bmp", "wall2.bmp", "wall2.bmp" };
 
 	/// 载入四幅位图 
 	for (int i = 0; i<4; i++)
@@ -577,6 +661,7 @@ void CGLBaseView::LoadGLTextures()
 		}
 
 	}
+
 	return ;
 
 }
@@ -687,10 +772,10 @@ void CGLBaseView::DrawScene()
 
 			drawPLYwithMultiTexture();
 
-			glDisable(GL_TEXTURE_2D);
+		
 		
 			glFlush();
-			if (m_pDoc->_ftep)
+			if (m_pDoc->_ftep&&m_pDoc->show_ftep)
 			{
 				FindTextureElementPosition * ftep = m_pDoc->_ftep;
 				ftep->draw();

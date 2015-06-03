@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "var.h"
 #include "plyloader.h"
-
+#include "Line.h"
+#include "Triangle.h"
+#include <fstream>
+using namespace std;
 Model_PLY::Model_PLY()
 {
 	Faces_Triangles = NULL;
@@ -9,6 +12,7 @@ Model_PLY::Model_PLY()
 	Vertex_Buffer = NULL;
 	Normals = NULL;
 	showPart=1;
+
 }
 
 Model_PLY::~Model_PLY()
@@ -67,7 +71,18 @@ float* Model_PLY::calculateNormal(float *coord1, float *coord2, float *coord3)
 
 	return norm;
 }
-
+void Model_PLY::writeMesh(char *filename){
+	int i = 0;
+	FILE *out = fopen(filename, "w");
+	fprintf(out, "%d\n", this->pointArry.size());
+	fprintf(out, "%d\n", this->faceArry.size());
+	for (i = 0; i<this->pointArry.size(); i++){
+		fprintf(out, "%lf %lf %lf\n", pointArry[i].x, pointArry[i].y, pointArry[i].z);
+	}
+	for (i = 0; i<this->faceArry.size(); i++)
+		fprintf(out, "3 %d %d %d\n", faceArry[i].ptnum[0], faceArry[i].ptnum[1], faceArry[i].ptnum[2]);
+	fclose(out);
+}
 bool Model_PLY::Load(string filename)
 {
 	this->TotalConnectedTriangles = 0;
@@ -392,12 +407,105 @@ void Model_PLY::Draw()
 }
 void gl_face::updateTexCoord()
 {
+	int i = 0;
+	int j = 0;
 	if (!texCoord.update)
 	{
+		texCoord.update = true;
+		//判断是否
+		bool addIn = false;
+		
+		for (int i = 0; i < 3; i++)
+		{
+			if (texCoord.cor[i][0] <= 1 && texCoord.cor[i][0] >= 0 && texCoord.cor[i][1] <= 1 && texCoord.cor[i][1] >= 0)
+			{
+				addIn = true;
+			}
+		}
+	
+		if (this->facenum == 3703)
+		{
+			int breakpoint = 0;
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if (!(texCoord.cor[i][j] == texCoord.cor[i][j] ))
+				{
+					return;
+					//越界
+				}
+			}
+		}
+		//判断是否越界
+		Line * l[3];
+		for (i = 0; i < 3; i++)
+		{
+			l[i] = new Line();
+		}
+		l[0]->start.setValue(texCoord.cor[0][0], texCoord.cor[0][1], 0);
+		l[0]->  end.setValue(texCoord.cor[1][0], texCoord.cor[1][1],0);
+		l[1]->start.setValue(texCoord.cor[1][0], texCoord.cor[1][1], 0);
+		l[1]->end.setValue(texCoord.cor[2][0], texCoord.cor[2][1], 0);
+		l[2]->start.setValue(texCoord.cor[2][0], texCoord.cor[2][1], 0);
+		l[2]->end.setValue(texCoord.cor[0][0], texCoord.cor[0][1], 0);
+		Line * lb[4];
+		for (i = 0; i < 4; i++)
+		{
+			lb[i] = new Line();	
+		}
+		lb[0]->start.setValue(0, 0, 0);
+		lb[1]->start.setValue(0, 1, 0);
+		lb[2]->start.setValue(1, 1, 0);
+		lb[3]->start.setValue(1, 0, 0);
+		lb[0]->end.setValue(0, 1, 0);
+		lb[1]->end.setValue(1, 1, 0);
+		lb[2]->end.setValue(1, 0, 0);
+		lb[3]->end.setValue(0, 0, 0);
+
+		for (i = 0; i < 4; i++)
+		{
+			for (j = 0; j < 3; j++)
+			{
+				if (lb[i]->isCross(*l[j]))
+				{
+					addIn = true;
+				}
+			}
+		}
+		Point3D pt[3];
+		for (i = 0; i < 3; i++)
+		{
+			pt[i].x = texCoord.cor[i][0];
+			pt[i].y = texCoord.cor[i][1];
+			pt[i].z = texCoord.cor[i][2];
+		}
+		Triangle * tri1 = new Triangle();
+		tri1->setValue(pt);
+
+		Point3D ptb[4];
+		ptb[0].setValue(Point3D(0, 0, 0));
+		ptb[1].setValue(Point3D(0, 1, 0));
+		ptb[2].setValue(Point3D(1, 1, 0));
+		ptb[3].setValue(Point3D(1, 0, 0));
+		if (!addIn)
+		{
+			for (i = 0; i < 4; i++)
+			{
+				if (!tri1->isAPointInTriangle(ptb[i]))
+				{
+					return;
+				}
+			}
+			addIn = true;
+		}
+
+		if (!addIn) return;
 		//更新纹理信息，压入队列
 		Point3fv3 * pt3fv3 = new Point3fv3();
 		pt3fv3->setValue(texCoord);
 		texCoords.push_back(pt3fv3);
-		texCoord.update = true;
+		
 	}
 }

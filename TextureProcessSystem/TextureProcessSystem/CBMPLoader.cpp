@@ -111,7 +111,10 @@ bool CBMPLoader::Load(const char* fileName)
     /** 创建纹理对象 */
     glBindTexture(GL_TEXTURE_2D, ID);
 	
+
 	/** 控制滤波 */
+	float color[4] = { 1.0f, 1.0f,1.0f, 0.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);

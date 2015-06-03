@@ -13,6 +13,10 @@
 #include "GLBaseView.h"
 
 #include "FindTextureElementPosition.h"
+#include "Parameterization.h"
+#include "LocalParameterization.h"
+#include <fstream>
+using namespace std;
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -170,6 +174,7 @@ protected:
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
 {
+
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
@@ -193,6 +198,7 @@ void CTextureProcessSystemApp::OnSetValue(char rbffuntion)
 	CFrameWnd* pMain=(CFrameWnd*)CWinThread::m_pMainWnd;
 	CTextureProcessSystemDoc * pDoc = (CTextureProcessSystemDoc*)pMain->CFrameWnd::GetActiveDocument();
 
+	
 	pDoc->calculateValue(rbffuntion);
 	CString s1;
 	s1.Format("%s 插值",&rbffuntion);
@@ -274,37 +280,40 @@ void CTextureProcessSystemApp::Check()
 	int lastCount=0;
 	int tempCenter=0;
 	int newCenter=0;
-	double minCos=1;
-	//pDoc->calTexCorByIndex(0,1000);
-	//times++;
-	/*int it=0;
-	while(it<pDoc->userSelectTriangleIndex.size())
-	{
-
-		int index=pDoc->userSelectTriangleIndex.at(it);
-
-		pDoc->calTexCorByIndex(index,4);
-		times++;
-		CString s1;
-		s1.Format("新添加:  %d,times: %d",pDoc->count-lastCount,times);
-		lastCount=pDoc->count;
-		AfxMessageBox(s1);
-
-		it++;
-	}
-	
-	CString s1;
-	s1.Format("processed Nums:  %d",pDoc->count);
-	AfxMessageBox(s1);
-	*/
+	double minCos=1;	
 	//为每个基元贴图
-	
-	/*for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
+	/*ofstream f("triangleIndex.txt");
+	for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
+		//pDoc->texGenTime++;
+		if (!pDoc->_ftep->m_targetTexture->tes[i]->isShow) continue;
+		pDoc->calVertex2D(pDoc->_ftep->m_targetTexture->tes[i]->pos, pDoc->_ftep->m_targetTexture->tes[i]->face->facenum);
+		f << pDoc->_ftep->m_targetTexture->tes[i]->face->facenum << endl;
 		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
-	}*/
-	pDoc->calTexCorByIndex(0, 4);
-	pDoc->calTexCorByIndex(2677, 4);
+	}
+	f.close();*/
+	
+	
+	
+	pDoc->calTexCorByIndex(1585, 8);
+	pDoc->calTexCorByIndex(1587, 8);
+	pDoc->calTexCorByIndex(3700, 8);
+	pDoc->calTexCorByIndex(3786, 8);
+	pDoc->calTexCorByIndex(1690, 8);
+	pDoc->calTexCorByIndex(3701, 8);
+	
+	/*pDoc->buildTexCoordByIndex(1585, 4);
+	pDoc->buildTexCoordByIndex(1587, 4);
+	pDoc->buildTexCoordByIndex(3700, 4);
+	pDoc->buildTexCoordByIndex(3786, 4);
+	pDoc->buildTexCoordByIndex(1690, 4);
+	pDoc->buildTexCoordByIndex(3701, 4);*/
+	pDoc->logTex = true;
+	pDoc->show_ftep = false; 
 }
 
 
+//CString s1;
+//s1.Format("新添加:  %d,times: %d", pDoc->count - lastCount, times);
+//lastCount = pDoc->count;
+//AfxMessageBox(s1);
