@@ -10,7 +10,6 @@
 #ifndef SHARED_HANDLERS
 #include "TextureProcessSystem.h"
 #endif
-
 #include "TextureProcessSystemDoc.h"
 #include <propkey.h>
 #include "plyloader.h"
@@ -1631,7 +1630,8 @@ void CTextureProcessSystemDoc::count_h(int i)
 
 	/*if (!Triangle->at(i).textureclick||true)
 	{*/
-		Triangle->at(i).h = h;
+		//Triangle->at(i).h = h;
+		Triangle->at(i).h = 0.01;
 		//Triangle->at(i).textureclick = true;
 		Triangle->at(i).is2DCordFixed = true;
 		count++;
@@ -2094,11 +2094,11 @@ void CTextureProcessSystemDoc::calVertex2D(float pos[3], int index)
 	
 
 }
-void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
+void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int maxNum,float radius)
 {
 	vector<int> v;
 	int deep = 1;
-	buildTexCoord(index, v, deep, maxDeep);
+	buildTexCoord(index, v, deep, maxDeep, maxNum,radius);
 	LocalParameterization lp;
 	lp.init(&plyLoader, v);
 	//确定缩放比例
@@ -2161,32 +2161,66 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
 		plyLoader.faceArry[v[i]].updateTexCoord();
 	}
 }
-void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep,int maxDeep)
+void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep, int maxDeep, int maxNum, float radius)
 {
-	//最多层为maxdeep的深度优先遍历
-	if (deep <= maxDeep)
+	vector<int> vlist;
+	//广度优先遍历
+	vlist.push_back(index);
+	int count = 0;
+	while (vlist.size() > 0 && count<maxNum)
 	{
-		for (int i = 0; i < v.size(); i++)
+		
+		int m_index = vlist[0];
+		int new_indexdex[3];
+		new_indexdex[0] = findFaceIndex(m_index, 0, 1);
+		new_indexdex[1] = findFaceIndex(m_index, 1, 2);
+		new_indexdex[2] = findFaceIndex(m_index, 2, 0);
+	  
+		for (int j = 0; j < 3; j++)
 		{
-			if (index == v[i])
+			bool addIn = true;
+			addIn = [&](int a, int c, float r)mutable throw()->bool
 			{
-				deep--;
-				return;
+				Point3D ptA(this->plyLoader.faceArry[a].corex, 
+					this->plyLoader.faceArry[a].corey,
+					this->plyLoader.faceArry[a].corez);
+				Point3D ptC(this->plyLoader.faceArry[c].corex,
+					this->plyLoader.faceArry[c].corey,
+					this->plyLoader.faceArry[c].corez);
+				if ((ptA - ptC).getDistance() > r)
+					return false;
+				else
+					return true;
+			}(new_indexdex[j],m_index,radius);
+			for (int i = 0; i < vlist.size(); i++)
+			{
+				if (new_indexdex[j] == vlist[i])
+				{
+					addIn = false;
+					break;
+				}
+			}
+			if (addIn)
+			{
+				vlist.push_back(new_indexdex[j]);
 			}
 		}
-		v.push_back(index);
-		int index1 = findFaceIndex(index, 0, 1);
-		int index2 = findFaceIndex(index, 1, 2);
-		int index3 = findFaceIndex(index, 2, 0);
-		deep++;
-		buildTexCoord(index1, v, deep, maxDeep);
-		deep++;
-		buildTexCoord(index2, v, deep, maxDeep);
-		deep++;
-		buildTexCoord(index3, v, deep, maxDeep);
-		deep--;
-		return;
+		//m_index 出队
+		vlist.erase(vlist.begin());
+		bool vAddIn = true;
+		for (int i = 0; i < v.size(); i++)
+		{
+			if (m_index == v[i])
+			{
+				vAddIn = false;
+			}
+		}
+		if (vAddIn)
+		{
+			v.push_back(m_index);
+			count++;
+		}
+		
 	}
-	deep--;
 	return;
 }
