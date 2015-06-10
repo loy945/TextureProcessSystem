@@ -3,6 +3,7 @@
 #include "VertexPair.h"
 #include "Point3D.h"
 #include "plyloader.h"
+class Polyhedron;
 
 //1.建立一个局部模型，顶底序号从0开始，
 //2.有一个映射关系vertexPair,表示局部模型和PLY模型顶点序号对应关系
@@ -15,8 +16,17 @@ public:
 public:
 	vector<VertexPair* > * vvp;
 	void init(Model_PLY * ply, vector<int> faceIndexs);
+	double localPara(Model_PLY * ply, vector<int> faceIndexs, int indexCenter, Point3D * offset, float scale);
 	void face_Parameterization(Model_PLY * ply, vector<int> faceIndexs);
 	int find1by2(int index2);
 	int find2by1(int index1);
+	void updateTextureCoord();//更新纹理信息
+public:
+	Model_PLY * m_ply;
+	int m_indexCenter;
+	Point3D * m_2DOffset;//指定点在三角形内的相对位置
+	float m_scale;
+	Polyhedron *mymesh;//展开模型网格数据
+	int m_faceNums;//选中展开面片数量
 };
 

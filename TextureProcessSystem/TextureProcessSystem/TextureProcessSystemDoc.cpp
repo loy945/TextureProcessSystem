@@ -18,8 +18,10 @@
 #include <opencv2/opencv.hpp> 
 #include "PlaneRotate.h"
 #include "LocalParameterization.h"
+#ifdef PI
+#else
 #define PI 3.1415926
-
+#endif
 #define π 3.1415926
 #define λ 2
 #ifdef _DEBUG
@@ -2096,11 +2098,22 @@ void CTextureProcessSystemDoc::calVertex2D(float pos[3], int index)
 }
 void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int maxNum,float radius)
 {
-	vector<int> v;
+	vector<int> v; 
+	float kn = 1;
 	int deep = 1;
-	buildTexCoord(index, v, deep, maxDeep, maxNum,radius);
+	Point3D centerPt;
+	centerPt.setValue(Point3D(0, 0, 0));
 	LocalParameterization lp;
-	lp.init(&plyLoader, v);
+	double strech = 999;
+	while (strech>2)
+	{
+		buildTexCoord(index, v, deep, maxDeep, maxNum, radius);
+		strech = lp.localPara(&plyLoader, v, index, &Point3D(0, 0, 0), 8);
+		maxNum++;
+	}
+	/*
+
+
 	//确定缩放比例
 	float minCoord[3] = { 999, 999, 999 }; 
 	float maxCoord[3] = { -999, -999, -999 };
@@ -2133,12 +2146,11 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int 
 		sunLen += pow((maxCoord[k] - minCoord[k]), 2);
 	}
 	float lens3d = sqrtf(sunLen);
-	float kn = sqrtf(2) / lens3d ;
+	kn = sqrtf(2) / lens3d ;
 
 	//确定偏移量
 	//纹理中心在纹理坐标中的具体位置
 	//不妨设，中心在中心平面的重心，则
-	Point3D centerPt;
 	Point3D pt[3];
 	for (int k = 0; k < 3; k++)
 	{
@@ -2147,8 +2159,8 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int 
 	}
 	centerPt.x = (pt[0].x + pt[1].x + pt[2].x) / 3;
 	centerPt.y = (pt[0].y + pt[1].y + pt[2].y) / 3;
+	*/
 	kn = 8;
-
 	//直接添加纹理坐标
 	for (int i = 0; i < v.size(); i++)
 	{

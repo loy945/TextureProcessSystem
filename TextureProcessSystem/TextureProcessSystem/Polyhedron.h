@@ -110,6 +110,7 @@ public:
 	virtual ~Polyhedron();
 	// parameterization
 	void param();
+	void param(int indexCenterInPara, float scale, Point3D * offset);
 
 	void Polyhedron::readmesh(char *filename);
 	void Polyhedron::writemesh(char *filename);
@@ -144,5 +145,13 @@ public:
 	void Polyhedron::setSigmaZero();
 	void Polyhedron::setLaplaceC();
 	double Polyhedron::getCurrentE();
-
+public:
+	void mark();//标记贴图区域
+	void getRect(Point3D *rect[2]);//获得贴图区域
+	Point3D * getPos(Point3D **tir, Point3D * offset);
+public:
+	bool *faceEffect;//影响区域
+	int m_indexCenterInPara;
+	float m_scale;
+	Point3D * m_2DOffset;
 };
