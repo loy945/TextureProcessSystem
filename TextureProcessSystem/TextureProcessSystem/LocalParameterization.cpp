@@ -89,6 +89,7 @@ void LocalParameterization::init(Model_PLY * ply, vector<int> faceIndexs)
 	dV = vvp->size();
 	dF = faceIndexs.size();
 	mymesh->memoryallocate(dV, dF);
+
 	for (i = 0; i<mymesh->numberV; i++){
 		ptNum = find1by2(i);
 		dx = ply->pointArry[ptNum].x;

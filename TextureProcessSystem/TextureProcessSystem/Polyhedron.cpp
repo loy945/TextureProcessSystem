@@ -43,7 +43,7 @@ void Polyhedron::param(){
 
 	BoundaryMap();
 
-	if (boundarytype == 2){
+	if (boundarytype == 0){
 		setNaturalB(iteNum, PCBCGerror);
 		//make local parameterization via polar map 
 		setPolarMap();
@@ -81,8 +81,8 @@ void Polyhedron::readmesh(char *filename){
 	double dz = 0.0;
 	size_t ssize = fscanf(in, "%d", &dV);
 	ssize = fscanf(in, "%d", &dF);
-
 	memoryallocate(dV, dF);
+
 	for (i = 0; i<numberV; i++){
 		ssize = fscanf(in, "%lf %lf %lf", &dx, &dy, &dz);
 		setPoint(i, dx, dy, dz);
@@ -99,6 +99,7 @@ void Polyhedron::readmesh(char *filename){
 	/* feature analysis */
 	SetBoundaryLines();
 	setAreaMap3D();
+
 }
 void Polyhedron::writemesh(char *filename){
 	int i = 0;
@@ -454,6 +455,8 @@ void Polyhedron::memoryallocate(int dV, int dF){
 
 	numberV = dV;
 	numberF = dF;
+	//新建贴图范围数组
+	faceEffect = new bool[dF];
 	E = new double[numberF];
 	G = new double[numberF];
 	sigma = new double[numberV];
@@ -2178,7 +2181,7 @@ double Polyhedron::getCurrentE(){
 	dG = 0.0;
 
 	//更新当前状态下，标记贴图区域
-	faceEffect = new bool[numberF];
+
 	this->mark();
 
 	if (boundarysigma == 0)
@@ -2186,6 +2189,9 @@ double Polyhedron::getCurrentE(){
 		for (i = 0; i < numberF; i++)
 		{
 			//不计算没有贴图区域的拉伸
+			if (faceEffect != NULL)
+			{
+			}
 			if (!faceEffect[i]) continue;
 			if (boundary[Face[i][0]] != 1 && boundary[Face[i][1]] != 1 && boundary[Face[i][2]] != 1)
 			{

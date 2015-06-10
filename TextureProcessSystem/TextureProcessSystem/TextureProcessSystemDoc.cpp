@@ -246,7 +246,6 @@ void CTextureProcessSystemDoc::calculateValue(char rbffuntion)
 				error(i);
 			}
 		}
-
 }
 
 void CTextureProcessSystemDoc::rbfcreate(char rbffunt,float *res,int *num,float *coe)//计算RBF系数
@@ -2108,9 +2107,10 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int 
 	while (strech>2)
 	{
 		buildTexCoord(index, v, deep, maxDeep, maxNum, radius);
-		strech = lp.localPara(&plyLoader, v, index, &Point3D(0, 0, 0), 8);
+		strech = lp.localPara(&plyLoader, v, index, &Point3D(0, 0, 0), 0.125);
 		maxNum++;
 	}
+	lp.updateTextureCoord();
 	/*
 
 
