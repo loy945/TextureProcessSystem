@@ -4,7 +4,10 @@
 #include "Point3D.h"
 #include "Point2d.h"
 #include "PCBCGSolver.h"
-
+#include "TriangleRectCross.h"
+#include "TriangleCoorTrans.h"
+#include <fstream>
+using namespace std;
 Polyhedron::Polyhedron(){
 	// Default setting
 	pickID = -1;
@@ -17,6 +20,11 @@ Polyhedron::Polyhedron(){
 	smooth = 1;
 	intrinsiclambda = 0.5;
 	boundarysigma = 1;
+	faceEffect = NULL;
+	m_indexCenterInPara=0;
+    m_scale=1;
+	m_2DOffset = NULL;
+
 	PT = new PointTool();
 }
 Polyhedron::~Polyhedron(){
@@ -24,13 +32,20 @@ Polyhedron::~Polyhedron(){
 		memorydelete();
 	}
 } 
+void Polyhedron::param(int indexCenterInPara, float scale, Point3D * offset)
+{
+	m_indexCenterInPara = indexCenterInPara;
+	m_scale = scale;
+	m_2DOffset = offset;
+	param();
+}
 // parameterization
 void Polyhedron::param(){
 	//boundary mapping 
 
 	BoundaryMap();
 
-	if (boundarytype == 2){
+	if (boundarytype == 0){
 		setNaturalB(iteNum, PCBCGerror);
 		//make local parameterization via polar map 
 		setPolarMap();
@@ -68,8 +83,8 @@ void Polyhedron::readmesh(char *filename){
 	double dz = 0.0;
 	size_t ssize = fscanf(in, "%d", &dV);
 	ssize = fscanf(in, "%d", &dF);
-
 	memoryallocate(dV, dF);
+
 	for (i = 0; i<numberV; i++){
 		ssize = fscanf(in, "%lf %lf %lf", &dx, &dy, &dz);
 		setPoint(i, dx, dy, dz);
@@ -86,6 +101,7 @@ void Polyhedron::readmesh(char *filename){
 	/* feature analysis */
 	SetBoundaryLines();
 	setAreaMap3D();
+
 }
 void Polyhedron::writemesh(char *filename){
 	int i = 0;
@@ -441,6 +457,8 @@ void Polyhedron::memoryallocate(int dV, int dF){
 
 	numberV = dV;
 	numberF = dF;
+	//新建贴图范围数组
+	faceEffect = new bool[dF];
 	E = new double[numberF];
 	G = new double[numberF];
 	sigma = new double[numberV];
@@ -1425,6 +1443,7 @@ void Polyhedron::ParametrizationSmoothOptimal(int itenum, double error){
 	delete[] vecb;
 	delete[] UaXY;
 	delete[] sigsum;
+
 }
 // compute natural boundary 
 void Polyhedron::setNaturalB(int itenum, double error){
@@ -2162,21 +2181,26 @@ double Polyhedron::getCurrentE(){
 	double dE, dG;
 	dE = 0.0;
 	dG = 0.0;
-	if (boundarysigma == 0){
-		for (i = 0; i<numberF; i++){
-			if (boundary[Face[i][0]] != 1 && boundary[Face[i][1]] != 1 && boundary[Face[i][2]] != 1){
+
+	//更新当前状态下，标记贴图区域
+	this->mark();
+	//计算贴图区域三角形总面积
+	float area=	getFaceArea();
+	if (boundarysigma == 0)
+	{
+		for (i = 0; i < numberF; i++)
+		{
+			//不计算没有贴图区域的拉伸
+			if (!faceEffect[i]) continue;
+			if (boundary[Face[i][0]] != 1 && boundary[Face[i][1]] != 1 && boundary[Face[i][2]] != 1)
+			{
 				pV1 = pV[Face[i][0]];
 				pV2 = pV[Face[i][1]];
 				pV3 = pV[Face[i][2]];
 				pU1 = pU[Face[i][0]];
 				pU2 = pU[Face[i][1]];
 				pU3 = pU[Face[i][2]];
-
-
 				dsize1 = PT->getParametricA(pV1, pV2, pV3, pU1, pU2, pU3);
-
-
-
 				PT->setParametricDs(bc[0], point[Face[i][0]],
 					point[Face[i][1]], point[Face[i][2]],
 					pV1, pV2, pV3, dsize1);
@@ -2184,27 +2208,24 @@ double Polyhedron::getCurrentE(){
 					point[Face[i][1]], point[Face[i][2]],
 					pU1, pU2, pU3, dsize1);
 				dE = PT->InnerProduct(bc[0], bc[0]);
-
 				dG = PT->InnerProduct(bc[1], bc[1]);
 				dsum += areaMap3D[i] * 0.5*(dE + dG);
 			}
 		}
 	}
-	else{
-		for (i = 0; i<numberF; i++){
-
+	else
+	{
+		for (i = 0; i < numberF; i++)
+		{
+			//不计算没有贴图区域的拉伸
+			if (!faceEffect[i]) continue;
 			pV1 = pV[Face[i][0]];
 			pV2 = pV[Face[i][1]];
 			pV3 = pV[Face[i][2]];
 			pU1 = pU[Face[i][0]];
 			pU2 = pU[Face[i][1]];
 			pU3 = pU[Face[i][2]];
-
-
 			dsize1 = PT->getParametricA(pV1, pV2, pV3, pU1, pU2, pU3);
-
-
-
 			PT->setParametricDs(bc[0], point[Face[i][0]],
 				point[Face[i][1]], point[Face[i][2]],
 				pV1, pV2, pV3, dsize1);
@@ -2212,16 +2233,91 @@ double Polyhedron::getCurrentE(){
 				point[Face[i][1]], point[Face[i][2]],
 				pU1, pU2, pU3, dsize1);
 			dE = PT->InnerProduct(bc[0], bc[0]);
-
 			dG = PT->InnerProduct(bc[1], bc[1]);
 			dsum += areaMap3D[i] * 0.5*(dE + dG);
-
 		}
-
-
+	}
+	//这里需要重新计算面积 sumarea3D,2015,6,10
+	sumarea3D = getFaceArea();
+	if (boundarytype == 0 || boundarytype == 2){
+		constsumarea3D = sqrt(1.0 / sumarea3D);
+	}
+	else if (boundarytype == 1){
+		constsumarea3D = sqrt(((0.5*0.5*PI) / sumarea3D));
 	}
 	dsum = constsumarea3D*sqrt(dsum / sumarea3D);
 	return dsum;
+
+}
+
+void Polyhedron::getRect(Point3D * rect[2])
+{
+	Point3D * tri[3];
+	for (int i = 0; i < 3; i++)
+	{
+		tri[i] = new Point3D(this->pU[this->Face[m_indexCenterInPara][i]],this->pV[this->Face[m_indexCenterInPara][i]], 0);
+	}
+	Point3D * centerPoint = getPos(tri, m_2DOffset);
+	/*rect[0] = &(*centerPoint + Point3D(-m_scale / 2, -m_scale / 2, 0));
+	rect[1] = &(*centerPoint + Point3D(-m_scale / 2,  m_scale / 2, 0));
+	rect[2] = &(*centerPoint + Point3D( m_scale / 2,  m_scale / 2, 0));
+	rect[3] = &(*centerPoint + Point3D( m_scale / 2, -m_scale / 2, 0));*/
+ 	rect[0]->setValue(*centerPoint + Point3D(-m_scale / 2, -m_scale / 2, 0));
+	rect[1]->setValue(*centerPoint + Point3D(m_scale / 2, m_scale / 2, 0));
+
+	//记录rect
+	fstream file;
+	file.open("rect.log", ios::out);
+	file << rect[0]->x << "," << rect[0]->y << endl << rect[1]->x << "," << rect[1]->y << endl;
+	file.close();
+}
+Point3D * Polyhedron::getPos(Point3D **tir, Point3D * offset)
+{
+	TriangleCoorTrans tct;
+	tct.init(tir);
+	return tct.convertCoordUV2XY(offset);
+}
+float Polyhedron::getFaceArea()
+{
+	float sumArea = 0;
+	for (int i = 0; i < numberF; i++)
+	{
+		sumArea += areaMap3D[i];
+	}
+	return sumArea;
+}
+void Polyhedron::mark()
+{
+	//遍历模型
+	TriangleRectCross trc;
+	Point3D * tri[3];
+	Point3D * rect[2];
+	tri[0] = new Point3D();
+	tri[1] = new Point3D();
+	tri[2] = new Point3D();
+	rect[0] = new Point3D();
+	rect[1] = new Point3D();
+
+	for (int i = 0; i < this->numberF; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			tri[j]->setValue(this->pU[this->Face[i][j]], this->pV[this->Face[i][j]],0);
+		}
+		getRect(rect);
+		if (trc.isCrossed(tri, rect))
+		{
+			faceEffect[i] = true;
+		}
+		else
+		{
+			faceEffect[i] = false;
+			if (faceEffect[0] == false)
+			{
+				int breakPoint = 0;
+			}
+		}
+	}
 
 }
 

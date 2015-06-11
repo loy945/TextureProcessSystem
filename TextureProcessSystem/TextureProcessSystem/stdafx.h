@@ -38,10 +38,9 @@
 #include <vector>
 #include <string>
 #include <math.h>
-#include <gl/glext.h>
-
-#pragma comment(lib, "glew32.lib")
+//#pragma comment(lib, "glew32.lib")
 using namespace std;
+
 
 
 

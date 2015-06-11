@@ -771,10 +771,8 @@ void CGLBaseView::DrawScene()
 			drawPLY();
 
 			drawPLYwithMultiTexture();
-
-		
-		
 			glFlush();
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//填充模式
 			if (m_pDoc->_ftep&&m_pDoc->show_ftep)
 			{
 				FindTextureElementPosition * ftep = m_pDoc->_ftep;
@@ -789,7 +787,6 @@ void CGLBaseView::DrawScene()
 
 		}
 	}
-	
 	
 	//绘制选择的面片
 	vector<gl_face> * Triangle=&(m_pDoc->plyLoader.faceArry);

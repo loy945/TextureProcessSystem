@@ -291,9 +291,9 @@ void CTextureProcessSystemApp::Check()
 		f << pDoc->_ftep->m_targetTexture->tes[i]->face->facenum << endl;
 		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
 	}
-	f.close();*/
-	
-	
+	f.close();
+	*/
+	/*
 	
 	pDoc->calTexCorByIndex(1585, 8);
 	pDoc->calTexCorByIndex(1587, 8);
@@ -301,9 +301,11 @@ void CTextureProcessSystemApp::Check()
 	pDoc->calTexCorByIndex(3786, 8);
 	pDoc->calTexCorByIndex(1690, 8);
 	pDoc->calTexCorByIndex(3701, 8);
-	
-	/*pDoc->buildTexCoordByIndex(1585, 4);
-	pDoc->buildTexCoordByIndex(1587, 4);
+	*/
+	//pDoc->buildTexCoordByIndex(0, 5,20);
+	//pDoc->calTexCorByIndex(1585, 8);
+	pDoc->buildTexCoordByIndex(1585, 50,50,0.04);
+	/*pDoc->buildTexCoordByIndex(1587, 4);
 	pDoc->buildTexCoordByIndex(3700, 4);
 	pDoc->buildTexCoordByIndex(3786, 4);
 	pDoc->buildTexCoordByIndex(1690, 4);

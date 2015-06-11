@@ -10,7 +10,6 @@
 #ifndef SHARED_HANDLERS
 #include "TextureProcessSystem.h"
 #endif
-
 #include "TextureProcessSystemDoc.h"
 #include <propkey.h>
 #include "plyloader.h"
@@ -19,8 +18,10 @@
 #include <opencv2/opencv.hpp> 
 #include "PlaneRotate.h"
 #include "LocalParameterization.h"
+#ifdef PI
+#else
 #define PI 3.1415926
-
+#endif
 #define π 3.1415926
 #define λ 2
 #ifdef _DEBUG
@@ -245,7 +246,6 @@ void CTextureProcessSystemDoc::calculateValue(char rbffuntion)
 				error(i);
 			}
 		}
-
 }
 
 void CTextureProcessSystemDoc::rbfcreate(char rbffunt,float *res,int *num,float *coe)//计算RBF系数
@@ -1631,7 +1631,8 @@ void CTextureProcessSystemDoc::count_h(int i)
 
 	/*if (!Triangle->at(i).textureclick||true)
 	{*/
-		Triangle->at(i).h = h;
+		//Triangle->at(i).h = h;
+		Triangle->at(i).h = 0.01;
 		//Triangle->at(i).textureclick = true;
 		Triangle->at(i).is2DCordFixed = true;
 		count++;
@@ -2094,13 +2095,25 @@ void CTextureProcessSystemDoc::calVertex2D(float pos[3], int index)
 	
 
 }
-void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
+void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int maxNum,float radius)
 {
-	vector<int> v;
+	vector<int> v; 
+	float kn = 1;
 	int deep = 1;
-	buildTexCoord(index, v, deep, maxDeep);
+	Point3D centerPt;
+	centerPt.setValue(Point3D(0, 0, 0));
 	LocalParameterization lp;
-	lp.init(&plyLoader, v);
+	double strech = 999;
+	while (strech>2)
+	{
+		buildTexCoord(index, v, deep, maxDeep, maxNum, radius);
+		strech = lp.localPara(&plyLoader, v, index, &Point3D(0, 0, 0), 0.125);
+		maxNum++;
+	}
+	lp.updateTextureCoord();
+	/*
+
+
 	//确定缩放比例
 	float minCoord[3] = { 999, 999, 999 }; 
 	float maxCoord[3] = { -999, -999, -999 };
@@ -2133,12 +2146,11 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
 		sunLen += pow((maxCoord[k] - minCoord[k]), 2);
 	}
 	float lens3d = sqrtf(sunLen);
-	float kn = sqrtf(2) / lens3d ;
+	kn = sqrtf(2) / lens3d ;
 
 	//确定偏移量
 	//纹理中心在纹理坐标中的具体位置
 	//不妨设，中心在中心平面的重心，则
-	Point3D centerPt;
 	Point3D pt[3];
 	for (int k = 0; k < 3; k++)
 	{
@@ -2147,8 +2159,8 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
 	}
 	centerPt.x = (pt[0].x + pt[1].x + pt[2].x) / 3;
 	centerPt.y = (pt[0].y + pt[1].y + pt[2].y) / 3;
+	*/
 	kn = 8;
-
 	//直接添加纹理坐标
 	for (int i = 0; i < v.size(); i++)
 	{
@@ -2161,32 +2173,103 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep)
 		plyLoader.faceArry[v[i]].updateTexCoord();
 	}
 }
-void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep,int maxDeep)
+void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep, int maxDeep, int maxNum, float radius)
 {
-	//最多层为maxdeep的深度优先遍历
-	if (deep <= maxDeep)
+	vector<int> vlist;
+	int nearestIndex = index;
+	float mindis = 999;
+	//广度优先遍历
+	vlist.push_back(index);
+	int count = 0;
+	Point3D centerPT;
+	centerPT.x = plyLoader.faceArry[index].corex;
+	centerPT.y = plyLoader.faceArry[index].corey;
+	centerPT.z = plyLoader.faceArry[index].corez;
+
+	while (vlist.size() > 0 && count < maxNum)
 	{
-		for (int i = 0; i < v.size(); i++)
+		//找出与中心最近的
+		bool vAddIn = false;
+		while (!vAddIn)
 		{
-			if (index == v[i])
+			mindis = 999;
+			for (int i = 0; i < vlist.size(); i++)
 			{
-				deep--;
-				return;
+				Point3D pt;
+				pt.x = plyLoader.faceArry[vlist[i]].corex;
+				pt.y = plyLoader.faceArry[vlist[i]].corey;
+				pt.z = plyLoader.faceArry[vlist[i]].corez;
+				float dis = (centerPT - pt).getDistance();
+				if (dis < mindis)
+				{
+					nearestIndex = i;
+					mindis = dis;
+				}
+			}
+			vAddIn = true;
+			for (int i = 0; i < v.size(); i++)
+			{
+				if (vlist[nearestIndex] == v[i])
+				{
+					vAddIn = false;
+				}
+			}
+			if (vAddIn)
+			{
+				v.push_back(vlist[nearestIndex]);
+				count++;
 			}
 		}
-		v.push_back(index);
-		int index1 = findFaceIndex(index, 0, 1);
-		int index2 = findFaceIndex(index, 1, 2);
-		int index3 = findFaceIndex(index, 2, 0);
-		deep++;
-		buildTexCoord(index1, v, deep, maxDeep);
-		deep++;
-		buildTexCoord(index2, v, deep, maxDeep);
-		deep++;
-		buildTexCoord(index3, v, deep, maxDeep);
-		deep--;
-		return;
+		//
+		int m_index = vlist[nearestIndex];
+		//m_index 出队
+		vlist.erase(vlist.begin() + nearestIndex);
+
+		int new_indexdex[3];
+		new_indexdex[0] = findFaceIndex(m_index, 0, 1);
+		new_indexdex[1] = findFaceIndex(m_index, 1, 2);
+		new_indexdex[2] = findFaceIndex(m_index, 2, 0);
+	  
+		for (int j = 0; j < 3; j++)
+		{
+			bool addIn = true;
+			/*addIn = [&](int a, int c, float r)mutable throw()->bool
+			{
+				Point3D ptA(this->plyLoader.faceArry[a].corex, 
+					this->plyLoader.faceArry[a].corey,
+					this->plyLoader.faceArry[a].corez);
+				Point3D ptC(this->plyLoader.faceArry[c].corex,
+					this->plyLoader.faceArry[c].corey,
+					this->plyLoader.faceArry[c].corez);
+				if ((ptA - ptC).getDistance() > r)
+					return false;
+				else
+					return true;
+			}(new_indexdex[j],m_index,radius);*///半径限制
+			//在已经遍历或者已经在队列中的，不再添加
+			for (int i = 0; i < vlist.size(); i++)
+			{
+				if (new_indexdex[j] == vlist[i])
+				{
+					addIn = false;
+					break;
+				}
+			}
+			for (int i = 0; i < v.size(); i++)
+			{
+				if (new_indexdex[j] == v[i])
+				{
+					addIn = false;
+					break;
+				}
+			}
+			if (addIn)
+			{
+				vlist.push_back(new_indexdex[j]);
+			}
+		}
+	
+		
 	}
-	deep--;
 	return;
 }
