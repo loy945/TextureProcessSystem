@@ -2176,13 +2176,55 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int 
 void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep, int maxDeep, int maxNum, float radius)
 {
 	vector<int> vlist;
+	int nearestIndex = index;
+	float mindis = 999;
 	//广度优先遍历
 	vlist.push_back(index);
 	int count = 0;
-	while (vlist.size() > 0 && count<maxNum)
+	Point3D centerPT;
+	centerPT.x = plyLoader.faceArry[index].corex;
+	centerPT.y = plyLoader.faceArry[index].corey;
+	centerPT.z = plyLoader.faceArry[index].corez;
+
+	while (vlist.size() > 0 && count < maxNum)
 	{
-		
-		int m_index = vlist[0];
+		//找出与中心最近的
+		bool vAddIn = false;
+		while (!vAddIn)
+		{
+			mindis = 999;
+			for (int i = 0; i < vlist.size(); i++)
+			{
+				Point3D pt;
+				pt.x = plyLoader.faceArry[vlist[i]].corex;
+				pt.y = plyLoader.faceArry[vlist[i]].corey;
+				pt.z = plyLoader.faceArry[vlist[i]].corez;
+				float dis = (centerPT - pt).getDistance();
+				if (dis < mindis)
+				{
+					nearestIndex = i;
+					mindis = dis;
+				}
+			}
+			vAddIn = true;
+			for (int i = 0; i < v.size(); i++)
+			{
+				if (vlist[nearestIndex] == v[i])
+				{
+					vAddIn = false;
+				}
+			}
+			if (vAddIn)
+			{
+				v.push_back(vlist[nearestIndex]);
+				count++;
+			}
+		}
+		//
+		int m_index = vlist[nearestIndex];
+		//m_index 出队
+		vlist.erase(vlist.begin() + nearestIndex);
+
 		int new_indexdex[3];
 		new_indexdex[0] = findFaceIndex(m_index, 0, 1);
 		new_indexdex[1] = findFaceIndex(m_index, 1, 2);
@@ -2191,7 +2233,7 @@ void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep
 		for (int j = 0; j < 3; j++)
 		{
 			bool addIn = true;
-			addIn = [&](int a, int c, float r)mutable throw()->bool
+			/*addIn = [&](int a, int c, float r)mutable throw()->bool
 			{
 				Point3D ptA(this->plyLoader.faceArry[a].corex, 
 					this->plyLoader.faceArry[a].corey,
@@ -2203,10 +2245,19 @@ void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep
 					return false;
 				else
 					return true;
-			}(new_indexdex[j],m_index,radius);
+			}(new_indexdex[j],m_index,radius);*///半径限制
+			//在已经遍历或者已经在队列中的，不再添加
 			for (int i = 0; i < vlist.size(); i++)
 			{
 				if (new_indexdex[j] == vlist[i])
+				{
+					addIn = false;
+					break;
+				}
+			}
+			for (int i = 0; i < v.size(); i++)
+			{
+				if (new_indexdex[j] == v[i])
 				{
 					addIn = false;
 					break;
@@ -2217,21 +2268,7 @@ void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep
 				vlist.push_back(new_indexdex[j]);
 			}
 		}
-		//m_index 出队
-		vlist.erase(vlist.begin());
-		bool vAddIn = true;
-		for (int i = 0; i < v.size(); i++)
-		{
-			if (m_index == v[i])
-			{
-				vAddIn = false;
-			}
-		}
-		if (vAddIn)
-		{
-			v.push_back(m_index);
-			count++;
-		}
+	
 		
 	}
 	return;

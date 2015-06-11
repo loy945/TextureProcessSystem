@@ -6,6 +6,8 @@
 #include "PCBCGSolver.h"
 #include "TriangleRectCross.h"
 #include "TriangleCoorTrans.h"
+#include <fstream>
+using namespace std;
 Polyhedron::Polyhedron(){
 	// Default setting
 	pickID = -1;
@@ -2181,17 +2183,14 @@ double Polyhedron::getCurrentE(){
 	dG = 0.0;
 
 	//更新当前状态下，标记贴图区域
-
 	this->mark();
-
+	//计算贴图区域三角形总面积
+	float area=	getFaceArea();
 	if (boundarysigma == 0)
 	{
 		for (i = 0; i < numberF; i++)
 		{
 			//不计算没有贴图区域的拉伸
-			if (faceEffect != NULL)
-			{
-			}
 			if (!faceEffect[i]) continue;
 			if (boundary[Face[i][0]] != 1 && boundary[Face[i][1]] != 1 && boundary[Face[i][2]] != 1)
 			{
@@ -2239,7 +2238,13 @@ double Polyhedron::getCurrentE(){
 		}
 	}
 	//这里需要重新计算面积 sumarea3D,2015,6,10
-	//待续……并且faceEffect全是false，可能有计算错误
+	sumarea3D = getFaceArea();
+	if (boundarytype == 0 || boundarytype == 2){
+		constsumarea3D = sqrt(1.0 / sumarea3D);
+	}
+	else if (boundarytype == 1){
+		constsumarea3D = sqrt(((0.5*0.5*PI) / sumarea3D));
+	}
 	dsum = constsumarea3D*sqrt(dsum / sumarea3D);
 	return dsum;
 
@@ -2250,15 +2255,21 @@ void Polyhedron::getRect(Point3D * rect[2])
 	Point3D * tri[3];
 	for (int i = 0; i < 3; i++)
 	{
-		tri[i] = this->point[this->Face[m_indexCenterInPara][i]];
+		tri[i] = new Point3D(this->pU[this->Face[m_indexCenterInPara][i]],this->pV[this->Face[m_indexCenterInPara][i]], 0);
 	}
 	Point3D * centerPoint = getPos(tri, m_2DOffset);
 	/*rect[0] = &(*centerPoint + Point3D(-m_scale / 2, -m_scale / 2, 0));
 	rect[1] = &(*centerPoint + Point3D(-m_scale / 2,  m_scale / 2, 0));
 	rect[2] = &(*centerPoint + Point3D( m_scale / 2,  m_scale / 2, 0));
 	rect[3] = &(*centerPoint + Point3D( m_scale / 2, -m_scale / 2, 0));*/
-	rect[0]->setValue(*centerPoint + Point3D(-m_scale / 2, -m_scale / 2, 0));
+ 	rect[0]->setValue(*centerPoint + Point3D(-m_scale / 2, -m_scale / 2, 0));
 	rect[1]->setValue(*centerPoint + Point3D(m_scale / 2, m_scale / 2, 0));
+
+	//记录rect
+	fstream file;
+	file.open("rect.log", ios::out);
+	file << rect[0]->x << "," << rect[0]->y << endl << rect[1]->x << "," << rect[1]->y << endl;
+	file.close();
 }
 Point3D * Polyhedron::getPos(Point3D **tir, Point3D * offset)
 {
@@ -2266,12 +2277,24 @@ Point3D * Polyhedron::getPos(Point3D **tir, Point3D * offset)
 	tct.init(tir);
 	return tct.convertCoordUV2XY(offset);
 }
+float Polyhedron::getFaceArea()
+{
+	float sumArea = 0;
+	for (int i = 0; i < numberF; i++)
+	{
+		sumArea += areaMap3D[i];
+	}
+	return sumArea;
+}
 void Polyhedron::mark()
 {
 	//遍历模型
 	TriangleRectCross trc;
 	Point3D * tri[3];
 	Point3D * rect[2];
+	tri[0] = new Point3D();
+	tri[1] = new Point3D();
+	tri[2] = new Point3D();
 	rect[0] = new Point3D();
 	rect[1] = new Point3D();
 
@@ -2279,7 +2302,7 @@ void Polyhedron::mark()
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			tri[j] = this->point[this->Face[i][j]];
+			tri[j]->setValue(this->pU[this->Face[i][j]], this->pV[this->Face[i][j]],0);
 		}
 		getRect(rect);
 		if (trc.isCrossed(tri, rect))
@@ -2289,6 +2312,10 @@ void Polyhedron::mark()
 		else
 		{
 			faceEffect[i] = false;
+			if (faceEffect[0] == false)
+			{
+				int breakPoint = 0;
+			}
 		}
 	}
 

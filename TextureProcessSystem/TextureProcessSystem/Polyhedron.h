@@ -149,6 +149,8 @@ public:
 	void mark();//标记贴图区域
 	void getRect(Point3D *rect[2]);//获得贴图区域
 	Point3D * getPos(Point3D **tir, Point3D * offset);
+	float getFaceArea();//计算贴图区域三角形面积
+	
 public:
 	bool *faceEffect;//影响区域
 	int m_indexCenterInPara;

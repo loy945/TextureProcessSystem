@@ -44,8 +44,8 @@ Point3D * TriangleCoorTrans::convertCoordXY2UV(Point3D * centerPosXYCoord)
 	Vector3f ab = l[1] - l[0];
 	Vector3f ac = l[2] - l[0];
 
-	float u = ap.dot(ab) / ab.norm();
-	float v = ap.dot(ac) / ac.norm();
+	float u = ap.dot(ab) / pow(ab.norm(), 2);
+	float v = ap.dot(ac) / pow(ac.norm(), 2);
 	
 	return &Point3D(u, v, 0);
 
