@@ -24,7 +24,7 @@ Polyhedron::Polyhedron(){
 	m_indexCenterInPara=0;
     m_scale=1;
 	m_2DOffset = NULL;
-
+	m_centerPos = new Point3D(0, 0, 0);
 	PT = new PointTool();
 }
 Polyhedron::~Polyhedron(){
@@ -459,6 +459,10 @@ void Polyhedron::memoryallocate(int dV, int dF){
 	numberF = dF;
 	//新建贴图范围数组
 	faceEffect = new bool[dF];
+	for (int i = 0; i < dF; i++)
+	{
+		faceEffect[i] = true;
+	}
 	E = new double[numberF];
 	G = new double[numberF];
 	sigma = new double[numberV];
@@ -2185,7 +2189,6 @@ double Polyhedron::getCurrentE(){
 	//更新当前状态下，标记贴图区域
 	this->mark();
 	//计算贴图区域三角形总面积
-	float area=	getFaceArea();
 	if (boundarysigma == 0)
 	{
 		for (i = 0; i < numberF; i++)
@@ -2245,6 +2248,7 @@ double Polyhedron::getCurrentE(){
 	else if (boundarytype == 1){
 		constsumarea3D = sqrt(((0.5*0.5*PI) / sumarea3D));
 	}
+
 	dsum = constsumarea3D*sqrt(dsum / sumarea3D);
 	return dsum;
 
@@ -2288,6 +2292,9 @@ float Polyhedron::getFaceArea()
 }
 void Polyhedron::mark()
 {
+	//中心点
+	m_centerPos->setValue(this->pU[this->Face[0][0]], this->pV[this->Face[0][0]], 0);
+	//return;
 	//遍历模型
 	TriangleRectCross trc;
 	Point3D * tri[3];

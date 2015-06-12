@@ -156,4 +156,5 @@ public:
 	int m_indexCenterInPara;
 	float m_scale;
 	Point3D * m_2DOffset;
+	Point3D * m_centerPos;
 };

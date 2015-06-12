@@ -36,7 +36,7 @@ double LocalParameterization::localPara(Model_PLY * ply, vector<int> faceIndexs,
 	//ฒฮสýปฏ
 	this->face_Parameterization(ply, faceIndexs);
 
-	return mymesh->getCurrentE();
+ 	return mymesh->getCurrentE();
 }
 
 void LocalParameterization::init(Model_PLY * ply, vector<int> faceIndexs)
@@ -173,8 +173,8 @@ void LocalParameterization::updateTextureCoord()
 		{
 			for (j = 0; j < 3; j++)
 			{
-				m_ply->pointArry[m_ply->faceArry[find1by2(i, vfp)].ptnum[j]].u = mymesh->pU[mymesh->Face[i][j]];
-				m_ply->pointArry[m_ply->faceArry[find1by2(i, vfp)].ptnum[j]].v = mymesh->pV[mymesh->Face[i][j]];
+				m_ply->pointArry[m_ply->faceArry[find1by2(i, vfp)].ptnum[j]].u = (mymesh->pU[mymesh->Face[i][j]] - (m_2DOffset->x + mymesh->m_centerPos->x)) / m_scale + (m_2DOffset->x + mymesh->m_centerPos->x);
+				m_ply->pointArry[m_ply->faceArry[find1by2(i, vfp)].ptnum[j]].v = (mymesh->pV[mymesh->Face[i][j]] - (m_2DOffset->y + mymesh->m_centerPos->y)) / m_scale + (m_2DOffset->y + mymesh->m_centerPos->y);
 			}
 		}
 

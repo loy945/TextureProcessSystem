@@ -304,7 +304,7 @@ void CTextureProcessSystemApp::Check()
 	*/
 	//pDoc->buildTexCoordByIndex(0, 5,20);
 	//pDoc->calTexCorByIndex(1585, 8);
-	pDoc->buildTexCoordByIndex(1585, 50,50,0.04);
+	pDoc->buildTexCoordByIndex(1585, 50,250,0.04);
 	/*pDoc->buildTexCoordByIndex(1587, 4);
 	pDoc->buildTexCoordByIndex(3700, 4);
 	pDoc->buildTexCoordByIndex(3786, 4);
