@@ -15,7 +15,9 @@
 #include "FindTextureElementPosition.h"
 #include "Parameterization.h"
 #include "LocalParameterization.h"
+#include "Polyhedron.h"
 #include <fstream>
+#include "TriangleCoorTrans.h"
 using namespace std;
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -282,17 +284,33 @@ void CTextureProcessSystemApp::Check()
 	int newCenter=0;
 	double minCos=1;	
 	//为每个基元贴图
-	/*ofstream f("triangleIndex.txt");
+	ofstream f("triangleIndex.txt");
 	for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
-		//pDoc->texGenTime++;
 		if (!pDoc->_ftep->m_targetTexture->tes[i]->isShow) continue;
-		pDoc->calVertex2D(pDoc->_ftep->m_targetTexture->tes[i]->pos, pDoc->_ftep->m_targetTexture->tes[i]->face->facenum);
-		f << pDoc->_ftep->m_targetTexture->tes[i]->face->facenum << endl;
-		pDoc->calTexCorByIndex(pDoc->_ftep->m_targetTexture->tes[i]->face->facenum, 8);
+		//计算基元在中心面片的相对位置
+		Point3D pt1;//第i个基元的位置
+		pt1.x=  pDoc->_ftep->m_targetTexture->tes[i]->pos[0];
+		pt1.y = pDoc->_ftep->m_targetTexture->tes[i]->pos[1];
+		pt1.z = pDoc->_ftep->m_targetTexture->tes[i]->pos[2];
+		//所在面片序号
+		int faceNum = pDoc->_ftep->m_targetTexture->tes[i]->face->facenum;
+		TriangleCoorTrans tct;
+		Point3D * tri[3];
+		for (int i = 0; i < 3; i++)
+		{
+			tri[i] = new Point3D(pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[i]].x,
+				pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[i]].y,
+				pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[i]].z);
+		}
+		tct.init(tri);
+		pDoc->offsetPT->setValue(*tct.convertCoordXY2UV(&pt1));
+		pDoc->buildTexCoordByIndex(faceNum, 50, 150, 0.04);
 	}
 	f.close();
-	*/
+	
+	/*//1585测试用例
+	pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);
 	/*
 	
 	pDoc->calTexCorByIndex(1585, 8);
@@ -304,7 +322,7 @@ void CTextureProcessSystemApp::Check()
 	*/
 	//pDoc->buildTexCoordByIndex(0, 5,20);
 	//pDoc->calTexCorByIndex(1585, 8);
-	pDoc->buildTexCoordByIndex(1585, 50,250,0.04);
+
 	/*pDoc->buildTexCoordByIndex(1587, 4);
 	pDoc->buildTexCoordByIndex(3700, 4);
 	pDoc->buildTexCoordByIndex(3786, 4);

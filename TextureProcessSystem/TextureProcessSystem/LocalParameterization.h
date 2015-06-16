@@ -29,5 +29,6 @@ public:
 	float m_scale;
 	Polyhedron *mymesh;//展开模型网格数据
 	int m_faceNums;//选中展开面片数量
+	vector<bool> effectFaceVector;
 };
 

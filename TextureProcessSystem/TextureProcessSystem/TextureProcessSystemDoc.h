@@ -88,6 +88,7 @@ public:
 	bool show_ftep;//显示文理元素
 	//2015.5.21 
 	float offset[2];//偏移量
+	Point3D * offsetPT;
 	void calVertex2D(float pos[3],int index);//计算第index个三角形上点pos，投影后的坐标
 	void buildTexCoordByIndex(int index, int maxDeep, int maxNum, float radius);
 	void buildTexCoord(int index, vector<int>&v, int &deep, int maxDeep, int maxNum, float radius);

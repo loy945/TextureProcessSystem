@@ -10,6 +10,7 @@
 #include"PCBCGSolver.h"
 #include"Polyhedron.h"
 #include"Parameterization.h"
+#include "TriangleCoorTrans.h"
 #include <fstream>
 using namespace std;
 LocalParameterization::LocalParameterization()
@@ -25,7 +26,7 @@ double LocalParameterization::localPara(Model_PLY * ply, vector<int> faceIndexs,
 	//初始化参数
 	mymesh = new Polyhedron();
 	m_indexCenter = indexCenter;
-	m_2DOffset = offset;
+	m_2DOffset = offset;//2d坐标
 	
 	m_faceNums = 10;//初始值
 	m_scale = scale;
@@ -166,6 +167,7 @@ void LocalParameterization::updateTextureCoord()
 	int j = 0;
 	ofstream file;
 	file.open("faceEffect.log",ios::out);
+
 	for (i = 0; i < mymesh->numberF; i++)
 	{
 		file << find1by2(i, vfp) << " " << mymesh->faceEffect[i] << endl;
@@ -173,12 +175,13 @@ void LocalParameterization::updateTextureCoord()
 		{
 			for (j = 0; j < 3; j++)
 			{
-				m_ply->pointArry[m_ply->faceArry[find1by2(i, vfp)].ptnum[j]].u = (mymesh->pU[mymesh->Face[i][j]] - (m_2DOffset->x + mymesh->m_centerPos->x)) / m_scale + (m_2DOffset->x + mymesh->m_centerPos->x);
-				m_ply->pointArry[m_ply->faceArry[find1by2(i, vfp)].ptnum[j]].v = (mymesh->pV[mymesh->Face[i][j]] - (m_2DOffset->y + mymesh->m_centerPos->y)) / m_scale + (m_2DOffset->y + mymesh->m_centerPos->y);
+				m_ply->pointArry[m_ply->faceArry[find1by2(i, vfp)].ptnum[j]].u = (mymesh->pU[mymesh->Face[i][j]] - (mymesh->m_centerPos->x)) / m_scale + (mymesh->m_centerPos->x);
+				m_ply->pointArry[m_ply->faceArry[find1by2(i, vfp)].ptnum[j]].v = (mymesh->pV[mymesh->Face[i][j]] - (mymesh->m_centerPos->y)) / m_scale + (mymesh->m_centerPos->y);
 			}
 		}
+		bool res = mymesh->faceEffect[i];
+		effectFaceVector.push_back(res);
 
 	}
-
 	file.close();
 }

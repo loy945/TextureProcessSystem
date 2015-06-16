@@ -2292,12 +2292,25 @@ float Polyhedron::getFaceArea()
 }
 void Polyhedron::mark()
 {
+	//计算偏移值
+	Point3D * _2DOffset;
+	_2DOffset = new Point3D(0, 0, 0);
+	TriangleCoorTrans tct;
+	//所在面片序号
+	Point3D * tri[3];
+	for (int j = 0; j < 3; j++)
+	{
+		tri[j] = new Point3D(pU[Face[0][j]], pV[Face[0][j]], 0);
+	}
+	tct.init(tri);
+	m_centerPos->setValue(*tct.convertCoordUV2XY(m_2DOffset));
+	//
+
 	//中心点
-	m_centerPos->setValue(this->pU[this->Face[0][0]], this->pV[this->Face[0][0]], 0);
+	//m_centerPos->setValue(this->pU[this->Face[0][0]], this->pV[this->Face[0][0]], 0);
 	//return;
 	//遍历模型
 	TriangleRectCross trc;
-	Point3D * tri[3];
 	Point3D * rect[2];
 	tri[0] = new Point3D();
 	tri[1] = new Point3D();
@@ -2319,10 +2332,6 @@ void Polyhedron::mark()
 		else
 		{
 			faceEffect[i] = false;
-			if (faceEffect[0] == false)
-			{
-				int breakPoint = 0;
-			}
 		}
 	}
 

@@ -52,6 +52,7 @@ CTextureProcessSystemDoc::CTextureProcessSystemDoc()
 	show_ftep = true;
 	offset[0] = 0;
 	offset[1] = 0;
+	offsetPT = new Point3D(0, 0, 0);
 }
 
 CTextureProcessSystemDoc::~CTextureProcessSystemDoc()
@@ -2104,10 +2105,11 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int 
 	centerPt.setValue(Point3D(0, 0, 0));
 	LocalParameterization lp;
 	double strech = 999;
-	while (strech>2)
+	while (strech>1)
 	{
+		v.clear();
 		buildTexCoord(index, v, deep, maxDeep, maxNum, radius);
-		strech = lp.localPara(&plyLoader, v, index, &Point3D(0, 0, 0), 0.125);
+		strech = lp.localPara(&plyLoader, v, index, offsetPT, 0.125);
 		maxNum++;
 	}
 	lp.updateTextureCoord();
@@ -2169,13 +2171,27 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int 
 			plyLoader.faceArry[v[i]].texCoord.cor[j][0] = (plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].u - centerPt.x)*kn + centerPt.x;
 			plyLoader.faceArry[v[i]].texCoord.cor[j][1] = (plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].v - centerPt.y)*kn + centerPt.y;
 		}		*/
+		bool addIn = true;
 		for (int j = 0; j < 3; j++)
 		{
+			if (!lp.effectFaceVector[lp.find2by1(v[i], lp.vfp)])
+			{
+				addIn = false;
+				continue;
+			}
+			else
+			{
+				addIn = true;
+			}
 			plyLoader.faceArry[v[i]].texCoord.cor[j][0] = plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].u;
 			plyLoader.faceArry[v[i]].texCoord.cor[j][1] = plyLoader.pointArry[plyLoader.faceArry[v[i]].ptnum[j]].v;
 		}
-		plyLoader.faceArry[v[i]].texCoord.update = false;
-		plyLoader.faceArry[v[i]].updateTexCoord();
+		if (addIn)
+		{
+			plyLoader.faceArry[v[i]].texCoord.update = false;
+			plyLoader.faceArry[v[i]].updateTexCoord();
+		}
+
 	}
 }
 void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep, int maxDeep, int maxNum, float radius)

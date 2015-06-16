@@ -422,11 +422,6 @@ void gl_face::updateTexCoord()
 				addIn = true;
 			}
 		}
-	
-		if (this->facenum == 3703)
-		{
-			int breakpoint = 0;
-		}
 		for (int i = 0; i < 3; i++)
 		{
 			for (int j = 0; j < 3; j++)
@@ -502,6 +497,7 @@ void gl_face::updateTexCoord()
 		}
 
 		if (!addIn) return;
+		
 		//更新纹理信息，压入队列
 		Point3fv3 * pt3fv3 = new Point3fv3();
 		pt3fv3->setValue(texCoord);
