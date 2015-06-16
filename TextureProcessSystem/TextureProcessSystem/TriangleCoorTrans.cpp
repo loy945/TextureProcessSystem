@@ -1,10 +1,6 @@
 #include "StdAfx.h"
 #include "TriangleCoorTrans.h"
-#include <Eigen/Dense>  
-#include <Eigen/LU>
-using namespace Eigen;
-using namespace Eigen::internal;
-using namespace Eigen::Architecture;
+
 
 TriangleCoorTrans::TriangleCoorTrans()
 {
@@ -53,6 +49,9 @@ Point3D * TriangleCoorTrans::convertCoordXY2UV(Point3D * centerPosXYCoord)
 Point3D * TriangleCoorTrans::convertCoordUV2XY(Point3D * centerPosUVCoord)
 {
 	Point3D * res;
-	res = &(*m_trianglePos[0] + *m_trianglePos[1] * centerPosUVCoord->x+ *m_trianglePos[2] * centerPosUVCoord->y);
+
+	res = &(*m_trianglePos[0] + 
+		(*m_trianglePos[1] - *m_trianglePos[0]) * centerPosUVCoord->x +
+		(*m_trianglePos[2] - *m_trianglePos[0]) * centerPosUVCoord->y);
 	return res;
 }

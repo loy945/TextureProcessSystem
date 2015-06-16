@@ -1,5 +1,10 @@
 #pragma once
 #include "Point3D.h"
+#include <Eigen/Dense>  
+#include <Eigen/LU>
+using namespace Eigen;
+using namespace Eigen::internal;
+using namespace Eigen::Architecture;
 class TriangleCoorTrans
 {
 public:
@@ -14,5 +19,6 @@ public:
 	//调用下面两个方法前必须先初始化三角形顶点位置
 	Point3D * convertCoordXY2UV(Point3D * centerPosXYCoord);
 	Point3D * convertCoordUV2XY(Point3D * centerPosUVCoord);
+
 };
 

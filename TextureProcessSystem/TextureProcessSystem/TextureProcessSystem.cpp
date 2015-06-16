@@ -304,7 +304,10 @@ void CTextureProcessSystemApp::Check()
 				pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[i]].z);
 		}
 		tct.init(tri);
-		pDoc->offsetPT->setValue(*tct.convertCoordXY2UV(&pt1));
+		Point3D * temp = tct.convertCoordXY2UV(&pt1);
+		pDoc->offsetPT->x = temp->x;
+		pDoc->offsetPT->y = temp->y;
+
 		pDoc->buildTexCoordByIndex(faceNum, 50, 150, 0.04);
 	}
 	f.close();

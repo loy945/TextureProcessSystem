@@ -2292,18 +2292,21 @@ float Polyhedron::getFaceArea()
 }
 void Polyhedron::mark()
 {
+	Point3D * tri[3];
 	//计算偏移值
 	Point3D * _2DOffset;
 	_2DOffset = new Point3D(0, 0, 0);
 	TriangleCoorTrans tct;
-	//所在面片序号
-	Point3D * tri[3];
+	//所在面片序号	
 	for (int j = 0; j < 3; j++)
 	{
 		tri[j] = new Point3D(pU[Face[0][j]], pV[Face[0][j]], 0);
 	}
 	tct.init(tri);
-	m_centerPos->setValue(*tct.convertCoordUV2XY(m_2DOffset));
+	_2DOffset = tct.convertCoordUV2XY(m_2DOffset);
+	m_centerPos->x = _2DOffset->x;
+	m_centerPos->y = _2DOffset->y;
+	m_centerPos->z = _2DOffset->z;
 	//
 
 	//中心点
