@@ -297,11 +297,11 @@ void CTextureProcessSystemApp::Check()
 		int faceNum = pDoc->_ftep->m_targetTexture->tes[i]->face->facenum;
 		TriangleCoorTrans tct;
 		Point3D * tri[3];
-		for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
 		{
-			tri[i] = new Point3D(pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[i]].x,
-				pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[i]].y,
-				pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[i]].z);
+			tri[j] = new Point3D(pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[j]].x,
+				pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[j]].y,
+				pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[j]].z);
 		}
 		tct.init(tri);
 		Point3D * temp = tct.convertCoordXY2UV(&pt1);
