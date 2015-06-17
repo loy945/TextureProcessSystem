@@ -284,7 +284,7 @@ void CTextureProcessSystemApp::Check()
 	int newCenter=0;
 	double minCos=1;	
 	//为每个基元贴图
-	ofstream f("triangleIndex.txt");
+	/*ofstream f("triangleIndex.txt");
 	for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
 		if (!pDoc->_ftep->m_targetTexture->tes[i]->isShow) continue;
@@ -311,10 +311,38 @@ void CTextureProcessSystemApp::Check()
 		pDoc->buildTexCoordByIndex(faceNum, 50, 150, 0.04);
 	}
 	f.close();
-	
+	*/
 	/*//1585测试用例
 	pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);
-	/*
+	*/
+	/*//计算基元在中心面片的相对位置
+	Point3D pt1;//第i个基元的位置
+	pt1.x = pDoc->plyLoader.faceArry[1585].corex;
+	pt1.y = pDoc->plyLoader.faceArry[1585].corey;
+	pt1.z = pDoc->plyLoader.faceArry[1585].corez;
+	//所在面片序号
+	int faceNum = 1585;
+	TriangleCoorTrans tct;
+	Point3D * tri[3];
+	for (int j = 0; j < 3; j++)
+	{
+		tri[j] = new Point3D(pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[j]].x,
+			pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[j]].y,
+			pDoc->plyLoader.pointArry[pDoc->plyLoader.faceArry[faceNum].ptnum[j]].z);
+	}
+	tct.init(tri);
+	Point3D * temp = tct.convertCoordXY2UV(&pt1);
+	pDoc->offsetPT->x = temp->x;
+	pDoc->offsetPT->y = temp->y;
+	pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);
+	*//*
+	pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);
+	pDoc->buildTexCoordByIndex(1587, 50, 50, 0.04);
+	pDoc->buildTexCoordByIndex(3700, 50, 50, 0.04);
+	pDoc->buildTexCoordByIndex(3786, 50, 50, 0.04);
+	pDoc->buildTexCoordByIndex(1690, 50, 50, 0.04);
+	pDoc->buildTexCoordByIndex(3701, 50, 50, 0.04);
+	*/
 	
 	pDoc->calTexCorByIndex(1585, 8);
 	pDoc->calTexCorByIndex(1587, 8);
@@ -322,7 +350,7 @@ void CTextureProcessSystemApp::Check()
 	pDoc->calTexCorByIndex(3786, 8);
 	pDoc->calTexCorByIndex(1690, 8);
 	pDoc->calTexCorByIndex(3701, 8);
-	*/
+	
 	//pDoc->buildTexCoordByIndex(0, 5,20);
 	//pDoc->calTexCorByIndex(1585, 8);
 

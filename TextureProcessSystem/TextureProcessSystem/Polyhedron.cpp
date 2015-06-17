@@ -2262,6 +2262,9 @@ void Polyhedron::getRect(Point3D * rect[2])
 		tri[i] = new Point3D(this->pU[this->Face[m_indexCenterInPara][i]],this->pV[this->Face[m_indexCenterInPara][i]], 0);
 	}
 	Point3D * centerPoint = getPos(tri, m_2DOffset);
+	//暂时用三角形重心代替，等坐标转换误差消除后再恢复
+	centerPoint->x = (pU[Face[m_indexCenterInPara][0]] + pU[Face[m_indexCenterInPara][1]] + pU[Face[m_indexCenterInPara][2]]) / 3.0;
+	centerPoint->y = (pV[Face[m_indexCenterInPara][0]] + pV[Face[m_indexCenterInPara][1]] + pV[Face[m_indexCenterInPara][2]]) / 3.0;
 	/*rect[0] = &(*centerPoint + Point3D(-m_scale / 2, -m_scale / 2, 0));
 	rect[1] = &(*centerPoint + Point3D(-m_scale / 2,  m_scale / 2, 0));
 	rect[2] = &(*centerPoint + Point3D( m_scale / 2,  m_scale / 2, 0));
@@ -2307,8 +2310,9 @@ void Polyhedron::mark()
 	m_centerPos->x = _2DOffset->x;
 	m_centerPos->y = _2DOffset->y;
 	m_centerPos->z = _2DOffset->z;
-	//
-
+	//默认取重心
+	m_centerPos->x = (pU[Face[0][0]] + pU[Face[0][1]] + pU[Face[0][2]]) / 3.0;
+	m_centerPos->y = (pV[Face[0][0]] + pV[Face[0][1]] + pV[Face[0][2]]) / 3.0;//此时效果准确*/
 	//中心点
 	//m_centerPos->setValue(this->pU[this->Face[0][0]], this->pV[this->Face[0][0]], 0);
 	//return;
