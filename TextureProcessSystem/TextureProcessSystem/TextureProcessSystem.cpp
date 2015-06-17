@@ -284,7 +284,7 @@ void CTextureProcessSystemApp::Check()
 	int newCenter=0;
 	double minCos=1;	
 	//为每个基元贴图
-	/*ofstream f("triangleIndex.txt");
+	ofstream f("triangleIndex.txt");
 	for (int i = 0; i < pDoc->_ftep->m_targetTexture->tes.size(); i++)
 	{
 		if (!pDoc->_ftep->m_targetTexture->tes[i]->isShow) continue;
@@ -311,7 +311,7 @@ void CTextureProcessSystemApp::Check()
 		pDoc->buildTexCoordByIndex(faceNum, 50, 150, 0.04);
 	}
 	f.close();
-	*/
+	
 	/*//1585测试用例
 	pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);
 	*/
@@ -335,21 +335,21 @@ void CTextureProcessSystemApp::Check()
 	pDoc->offsetPT->x = temp->x;
 	pDoc->offsetPT->y = temp->y;
 	pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);
-	*//*
-	pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);
+	*/
+/*	pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);
 	pDoc->buildTexCoordByIndex(1587, 50, 50, 0.04);
 	pDoc->buildTexCoordByIndex(3700, 50, 50, 0.04);
 	pDoc->buildTexCoordByIndex(3786, 50, 50, 0.04);
 	pDoc->buildTexCoordByIndex(1690, 50, 50, 0.04);
 	pDoc->buildTexCoordByIndex(3701, 50, 50, 0.04);
-	*/
 	
-	pDoc->calTexCorByIndex(1585, 8);
+	*/
+	/*pDoc->calTexCorByIndex(1585, 8);
 	pDoc->calTexCorByIndex(1587, 8);
 	pDoc->calTexCorByIndex(3700, 8);
 	pDoc->calTexCorByIndex(3786, 8);
 	pDoc->calTexCorByIndex(1690, 8);
-	pDoc->calTexCorByIndex(3701, 8);
+	pDoc->calTexCorByIndex(3701, 8);*/
 	
 	//pDoc->buildTexCoordByIndex(0, 5,20);
 	//pDoc->calTexCorByIndex(1585, 8);
