@@ -54,7 +54,7 @@ public:
 	//2015.3.2添加模型展开为平面变量
 	bool modelShowIn3Dor2D;//true代表显示三维模型 false显示展开到二维上的模型
 	void draw2DModel();
-	CBMPLoader m_texture[4];      /**< 载入4幅纹理 */
+	CBMPLoader m_texture[6];      /**< 载入6幅纹理 */
 	GLuint texture;
 	void DrawTest();
 

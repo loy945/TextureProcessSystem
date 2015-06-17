@@ -210,7 +210,7 @@ void CGLBaseView::drawPLYwithMultiTexture()
 		if (Triangle->at(i).texCoords.size() > 0)
 		{
 			//重叠区域大于4层，警告信息
-			if (Triangle->at(i).texCoords.size() > 4)
+			if (Triangle->at(i).texCoords.size() > 6)
 			{
 				if (m_pDoc->logTex)
 				{
@@ -231,6 +231,18 @@ void CGLBaseView::drawPLYwithMultiTexture()
 
 			switch (Triangle->at(i).texCoords.size())
 			{
+			case 6:
+			{		 /* 激活纹理3,并绑定纹理 */
+					  glActiveTextureARB(GL_TEXTURE5_ARB);
+					  glEnable(GL_TEXTURE_2D);
+					  glBindTexture(GL_TEXTURE_2D, m_texture[5].ID);
+			}
+			case 5:
+			{		 /* 激活纹理3,并绑定纹理 */
+					  glActiveTextureARB(GL_TEXTURE4_ARB);
+					  glEnable(GL_TEXTURE_2D);
+					  glBindTexture(GL_TEXTURE_2D, m_texture[4].ID);
+			}
 			case 4:
 			{		 /* 激活纹理3,并绑定纹理 */
 					  glActiveTextureARB(GL_TEXTURE3_ARB);
@@ -261,6 +273,10 @@ void CGLBaseView::drawPLYwithMultiTexture()
 			glBegin(GL_TRIANGLES);//显示
 			switch (Triangle->at(i).texCoords.size())
 			{
+			case 6:
+				glMultiTexCoord2fARB(GL_TEXTURE5_ARB, Triangle->at(i).texCoords[5]->cor[0][0], Triangle->at(i).texCoords[5]->cor[0][1]);
+			case 5:
+				glMultiTexCoord2fARB(GL_TEXTURE4_ARB, Triangle->at(i).texCoords[4]->cor[0][0], Triangle->at(i).texCoords[4]->cor[0][1]);
 			case 4:
 				glMultiTexCoord2fARB(GL_TEXTURE3_ARB, Triangle->at(i).texCoords[3]->cor[0][0], Triangle->at(i).texCoords[3]->cor[0][1]);
 			case 3:
@@ -273,6 +289,10 @@ void CGLBaseView::drawPLYwithMultiTexture()
 			glVertex3f(v1x, v1y, v1z);
 			switch (Triangle->at(i).texCoords.size())
 			{
+			case 6:
+				glMultiTexCoord2fARB(GL_TEXTURE5_ARB, Triangle->at(i).texCoords[5]->cor[1][0], Triangle->at(i).texCoords[5]->cor[1][1]);
+			case 5:
+				glMultiTexCoord2fARB(GL_TEXTURE4_ARB, Triangle->at(i).texCoords[4]->cor[1][0], Triangle->at(i).texCoords[4]->cor[1][1]);
 			case 4:
 				glMultiTexCoord2fARB(GL_TEXTURE3_ARB, Triangle->at(i).texCoords[3]->cor[1][0], Triangle->at(i).texCoords[3]->cor[1][1]);
 			case 3:
@@ -285,6 +305,10 @@ void CGLBaseView::drawPLYwithMultiTexture()
 			glVertex3f(v2x, v2y, v2z);
 			switch (Triangle->at(i).texCoords.size())
 			{
+			case 6:
+				glMultiTexCoord2fARB(GL_TEXTURE5_ARB, Triangle->at(i).texCoords[5]->cor[2][0], Triangle->at(i).texCoords[5]->cor[2][1]);
+			case 5:
+				glMultiTexCoord2fARB(GL_TEXTURE4_ARB, Triangle->at(i).texCoords[4]->cor[2][0], Triangle->at(i).texCoords[4]->cor[2][1]);
 			case 4:
 				glMultiTexCoord2fARB(GL_TEXTURE3_ARB, Triangle->at(i).texCoords[3]->cor[2][0], Triangle->at(i).texCoords[3]->cor[2][1]);
 			case 3:
@@ -315,6 +339,16 @@ void CGLBaseView::drawPLYwithMultiTexture()
 		glEnd();
 		switch (Triangle->at(i).texCoords.size())
 		{
+		case 6:
+		{
+				  glActiveTextureARB(GL_TEXTURE5_ARB);
+				  glDisable(GL_TEXTURE_2D);
+		}
+		case 5:
+		{
+				  glActiveTextureARB(GL_TEXTURE4_ARB);
+				  glDisable(GL_TEXTURE_2D);
+		}
 		case 4:
 		{		
 				  glActiveTextureARB(GL_TEXTURE3_ARB);
@@ -650,10 +684,10 @@ void CGLBaseView::makeCheckImage(void)
 void CGLBaseView::LoadGLTextures()
 {
 	/// 文件名 
-	char* fileName[4] = { "wall2.bmp", "wall2.bmp", "wall2.bmp", "wall2.bmp" };
+	char* fileName[6] = { "wall2.bmp", "wall2.bmp", "wall2.bmp", "wall2.bmp","wall2.bmp","wall2.bmp" };
 
 	/// 载入四幅位图 
-	for (int i = 0; i<4; i++)
+	for (int i = 0; i<6; i++)
 	{
 		if (!m_texture[i].Load(fileName[i]))
 		{

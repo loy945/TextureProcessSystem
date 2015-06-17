@@ -18,6 +18,7 @@
 #include <opencv2/opencv.hpp> 
 #include "PlaneRotate.h"
 #include "LocalParameterization.h"
+#include "Triangle.h"
 #ifdef PI
 #else
 #define PI 3.1415926
@@ -2105,10 +2106,14 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int 
 	centerPt.setValue(Point3D(0, 0, 0));
 	LocalParameterization lp;
 	double strech = 999;
+	double area = 0;
+	float scale = 1;
 	while (strech>1)
 	{
 		v.clear();
 		buildTexCoord(index, v, deep, maxDeep, maxNum, radius);
+		area=getSelectArea(v);
+		scale = area*0.008;
 		strech = lp.localPara(&plyLoader, v, index, offsetPT, 0.125);
 		maxNum++;
 	}
@@ -2293,4 +2298,26 @@ void CTextureProcessSystemDoc::buildTexCoord(int index, vector<int>&v, int &deep
 		
 	}
 	return;
+}
+double CTextureProcessSystemDoc::getSelectArea(vector<int>&v)
+{
+	double res = 0;
+	int ptnum[3];
+	Point3D pt[3];
+	for (int i = 0; i < v.size(); i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			ptnum[j] = plyLoader.faceArry[i].ptnum[j];
+			pt[j].x = plyLoader.pointArry[ptnum[j]].x;
+			pt[j].y = plyLoader.pointArry[ptnum[j]].y;
+			pt[j].z = plyLoader.pointArry[ptnum[j]].z;
+		}
+		Triangle * tri = new Triangle();
+		tri->setValue(pt);
+		res += tri->getArea();
+		delete tri;
+	}
+	return res;
+
 }

@@ -92,6 +92,7 @@ public:
 	void calVertex2D(float pos[3],int index);//计算第index个三角形上点pos，投影后的坐标
 	void buildTexCoordByIndex(int index, int maxDeep, int maxNum, float radius);
 	void buildTexCoord(int index, vector<int>&v, int &deep, int maxDeep, int maxNum, float radius);
+	double getSelectArea(vector<int>&v);
 // 重写
 public:
 	virtual BOOL OnNewDocument();
