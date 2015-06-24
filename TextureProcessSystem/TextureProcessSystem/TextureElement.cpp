@@ -297,31 +297,7 @@ void TextureElement::textureElementSort()
 }
 void TextureElement::projection(float *n ,float * position,float * planeCenterPos,float res[3])
 {
-	/*
-	平面方程  
-	wx+b=0
-	b=-np0;
-	d=np+b;
-	p-p*=nd;
-	*/
 
-	//教授参数化简法
-	/*
-	float plc[3];
-	float pc[3];
-	for(int i=0;i<3;i++)
-	{
-		pc[i]=*(position+i);
-		plc[i]=*(planeCenterPos+i);
-	}
-	float  b=-vecTimes(n,planeCenterPos);
-	float d=vecTimes(n,position)+b;
-
-	for(int i=0;i<3;i++)
-	{
-		res[i]=position[i]-n[i]*d;
-	}*/
-	//2015.5.6
 	Vector3f nor,a;//nor是平面法向量，a是要投影到此平面上的向量
 	for (int i = 0; i < 3; i++)
 	{
@@ -340,4 +316,25 @@ void TextureElement::projection(float *n ,float * position,float * planeCenterPo
 	}
 	
 	
+}
+void TextureElement::setPos(Point3D * pt)
+{
+	pos[0] = pt->x;
+	pos[1] = pt->y;
+	pos[2] = pt->z;
+}
+Point3D * TextureElement::getPos()
+{
+	Point3D * pt = new Point3D(pos);
+	return pt;
+}
+LinkData * TextureElement::findLinkDataById(int index)
+{
+	for (int i = 0; i < link.size(); i++)
+	{
+		if (index == link[i]->index)
+		{
+			return link[i];
+		}
+	}
 }

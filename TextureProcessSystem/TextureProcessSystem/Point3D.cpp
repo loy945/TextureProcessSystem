@@ -11,6 +11,12 @@ Point3D::Point3D(void)
 Point3D::~Point3D(void)
 {
 }
+Point3D::Point3D(float pos[3])
+{
+	this->x = pos[0];
+	this->y = pos[1];
+	this->z = pos[2];
+}
 Point3D_3::Point3D_3(void)
 {
 	update = true;//默认数据已压入vector

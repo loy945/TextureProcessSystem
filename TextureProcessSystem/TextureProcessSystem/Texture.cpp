@@ -116,31 +116,37 @@ double Texture::getError(LinkData *  link1,LinkData * link2)
 	return returnError;
 }
 
-TextureElement * Texture::findOptimalMatchTextureElement(TextureElement *te,vector<int> &addList)
+TextureElement * Texture::findOptimalMatchTextureElement(TextureElement *te, vector<int> &addList, vector<vector<int> >  &linkPairs)
 {
 	
 	double minEorror=999;
 	double eorror;
 	TextureElement  * res=NULL;
 	vector<int>  f;
+	vector<vector<int>>  l;
 	int m_start=0;
 	int m_steps=0;
 	for(int i=0;i<tes.size();i++)
 	{
 		TextureElement * tei=tes.at(i);
 		if(!isRingStruct(tei->index)) continue;
-		eorror=differentBetweenTwoTextureElement(te,tei,f);
+		eorror = differentBetweenTwoTextureElement(te, tei, f, l);
 		if(eorror<minEorror)
 		{
 			minEorror=eorror;
 			res=tei;
 			addList.assign(f.begin(),f.end());
+			linkPairs.assign(l.begin(), l.end());
 		}
 		f.clear();
+		l.clear();
 	}
+	//确定Link基元的序号
+
+
 	return res;
 }
-double Texture::differentBetweenTwoTextureElement(TextureElement *te1,TextureElement *te2,vector<int> &addList)//te2的连通信息完整，而te1的不完整，用te1的连通信息（4点，2个三角形）与te2的每个顶点局部连通关系（4点，2个三角形）作比较
+double Texture::differentBetweenTwoTextureElement(TextureElement *te1, TextureElement *te2, vector<int> &addList, vector<vector<int> >  &linkPairs)//te2的连通信息完整，而te1的不完整，用te1的连通信息（4点，2个三角形）与te2的每个顶点局部连通关系（4点，2个三角形）作比较
 {
 	double error = 0;
 	double minEorror = 9999;
@@ -206,6 +212,10 @@ double Texture::differentBetweenTwoTextureElement(TextureElement *te1,TextureEle
 		ip.sampleIndex = minJ;
 		ip.targetIndex = i;
 		matchIndexs.push_back(ip);
+		vector<int> linkPair;
+		linkPair.push_back(minJ);
+		linkPair.push_back(te2->link.at(minJ)->linkElement->index);//(顺序号,对应顶点号)
+		linkPairs.push_back(linkPair); 
 		error += tempMinError;
 	}
 	addList.clear();

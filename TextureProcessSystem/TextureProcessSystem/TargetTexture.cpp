@@ -10,6 +10,30 @@ TargetTexture::TargetTexture(void)
 TargetTexture::~TargetTexture(void)
 {
 }
+bool TargetTexture::deleteLink(TextureElement *te1, TextureElement *te2)
+{
+	if (te1->index == te2->index) return false;
+
+	for (int i = 0; i < te1->link.size(); i++)
+	{
+		if (te1->link[i]->index == te2->index)
+		{
+			te1->link.erase(te1->link.begin() + i);
+			break;
+		}
+	}
+	te1->textureElementSort();
+	for (int i = 0; i < te2->link.size(); i++)
+	{
+		if (te2->link[i]->index == te1->index)
+		{
+			te2->link.erase(te2->link.begin() + i);
+			break;
+		}
+	}
+	te2->textureElementSort();	
+	
+}
 bool TargetTexture::addLink(TextureElement *te1, TextureElement *te2)
 {
 	if (te1->index == te2->index) return false;
@@ -29,7 +53,7 @@ bool TargetTexture::addLink(TextureElement *te1, TextureElement *te2)
 	/*
 	double dx=te2.pos[0]-te1.pos[0];
 	double dy=te2.pos[1]-te1.pos[1];
-	//double dz=te2->centre->z-te1->centre->z;
+	//double dz=te2->pos->z-te1->pos->z;
 	//现在只考虑2D情况 计算长度 和象限
 	double len=sqrt(dx*dx+dy*dy);
 	double angle1=atan2f(dy,dx)/3.1415926*180;//atan -180<=angle<=180

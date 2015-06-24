@@ -52,7 +52,9 @@ public:
 	}
 	void textureElementSort();
 	void projection(float *n, float * position, float * planeCenterPos, float res[3]);
-	
+	void setPos(Point3D * pt);
+	Point3D * getPos();
+	LinkData * findLinkDataById(int index);
 
 };
 

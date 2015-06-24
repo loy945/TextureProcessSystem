@@ -5,6 +5,7 @@ class Point3D
 public:
 	Point3D(void);
 	~Point3D(void);
+	Point3D(float pos[3]);
 	Point3D(float x, float y, float z){ this->x = x; this->y = y; this->z = z; beLongFaceID = 0; }
 	void setValue(float x, float y, float z){ this->x = x; this->y = y; this->z = z; beLongFaceID = 0; }
 	void setValue(Point3D &point){ this->x = point.x; this->y = point.y; this->z = point.z; this->beLongFaceID = point.beLongFaceID; }

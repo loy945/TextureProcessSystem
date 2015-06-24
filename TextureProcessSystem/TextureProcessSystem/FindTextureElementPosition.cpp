@@ -4,6 +4,7 @@
 #include "highgui.h"
 #include <opencv2/opencv.hpp> 
 #include "config.h"
+#include "VectorIndexPair.h"
 #define pi 3.1415926
 using namespace cv;
 
@@ -72,7 +73,17 @@ void FindTextureElementPosition::init(CTextureProcessSystemDoc * pDoc)
 		m_targetTexture->addLink(targetCenter,tex);
 	}
 	//补全连通信息
-	//addlinks(targetCenter);
+	vector<int> matchF;
+	vector<vector<int> >  linkPairs;
+	for (int i = 0; i<targetCenter->link.size(); i++)
+	{
+		vector<int> a;
+		a.push_back(i);
+		a.push_back(i+1);
+		matchF.push_back(i);
+		linkPairs.push_back(a);
+	}
+	addlinks(targetCenter, matchF, linkPairs);
 
 	//统计个数
 	int w=0;
@@ -344,17 +355,18 @@ void FindTextureElementPosition::amendTargetTE(TextureElement * te)
 		te->link[i]->distance = te->getDisFrom(te->link[i]->linkElement->pos);
 	}
 }
-void FindTextureElementPosition::buildTargetTextureElement(TextureElement * centerTE)
+void FindTextureElementPosition::buildTargetTextureElement(TextureElement * centerTE, vector<int> matchF,vector<vector<int> >  &linkPairs)
 {
 	targetCenter = centerTE;
 	//修正当前基元的link数据
 	amendTargetTE(centerTE);
 	latestAddIn.clear();
-	vector<int> matchF;
+	
 	gl_face * theFace;
 	TextureElement * p_OMTE;
 	//分布最匹配的样本基元
-	p_OMTE=m_sampleTexture->findOptimalMatchTextureElement(centerTE, matchF);
+	p_OMTE = m_sampleTexture->findOptimalMatchTextureElement(centerTE, matchF, linkPairs);
+
 	//顶点候选集
 	P.clear();
 	pDoc->userSelectingTriangleIndex = centerTE->face->facenum;
@@ -371,22 +383,22 @@ void FindTextureElementPosition::buildTargetTextureElement(TextureElement * cent
 		m_targetTexture->addTE(tex);
 		m_targetTexture->addLink(targetCenter, tex);
 		latestAddIn.push_back(tex->index);
-	}
-	if (centerTE->link.size() < 6)
-	{
-		int breakPoint = 0;
+		vector<int> linkPair;
+		linkPair.push_back(matchF[i]);
+		linkPair.push_back(tex->index);
+		linkPairs.push_back(linkPair);
+		
 	}
 	
 }
-void FindTextureElementPosition::addlinks(TextureElement * centerTE)
+void FindTextureElementPosition::addlinks(TextureElement * centerTE, vector<int> matchF,vector<vector<int> >  &linkPairs)
 {
-	centerTE->textureElementSort();
-	int i = 0, j = 0;
-	for (i = 0; i < centerTE->link.size(); i++)
+	int i = 0, j = 0,k = 0;
+	/*for (i = 0; i < centerTE->link.size(); i++)
 	{
 		j = i + 1;
 		if (j >= centerTE->link.size())
-		{
+		{LINK
 			j = 0;
 		}
 		if (centerTE->link[i]->linkElement->isShow&&centerTE->link[j]->linkElement->isShow)
@@ -394,6 +406,34 @@ void FindTextureElementPosition::addlinks(TextureElement * centerTE)
 			m_targetTexture->addLink(centerTE->link[i]->linkElement, centerTE->link[j]->linkElement);
 		}
 		
+	}*/
+	int index = 0;
+	int pindex = 0;
+	int aindex = 0;
+	for (i = 0; i < matchF.size(); i++)
+	{
+		j = i - 1;
+		if (j < 0)
+		{
+			j = matchF.size() - 1;
+		}
+		k = i + 1;
+		if (k>matchF.size() - 1)
+		{
+			k = 0;
+		}
+		//逻辑有点小问题20150624
+		VectorIndexPair(linkPairs, matchF[i], 2, index);
+		VectorIndexPair(linkPairs, matchF[j], 2, pindex);
+		VectorIndexPair(linkPairs, matchF[k], 2, aindex);
+		//if (centerTE->link[index]->linkElement->isShow&&centerTE->link[pindex]->linkElement->isShow&&centerTE->link[aindex]->linkElement->isShow)
+		//{
+
+  			m_targetTexture->addLink(centerTE->link[index]->linkElement, centerTE->link[pindex]->linkElement);
+			m_targetTexture->addLink(centerTE->link[index]->linkElement, centerTE->link[aindex]->linkElement);
+		//}
+
+
 	}
 	centerTE->isfixed = true;
 }
@@ -423,10 +463,12 @@ TextureElement * FindTextureElementPosition::theNearsetTE()
 void FindTextureElementPosition::buildByStep()
 {
 	TextureElement * nexte = theNearsetTE();
-	buildTargetTextureElement(nexte);
+	vector<int> matchF;
+	vector<vector<int> >  linkPairs;
+	buildTargetTextureElement(nexte, matchF, linkPairs);
 	nexte->textureElementSort();
 	//amend();
-	addlinks(targetCenter);	
+	addlinks(targetCenter, matchF, linkPairs);
 	m_targetTexture->textureSort();
 }
 void FindTextureElementPosition::amend()
@@ -457,4 +499,73 @@ void FindTextureElementPosition::amend()
 		}
 	}
 
+}
+
+void FindTextureElementPosition::detectCross1(TextureElement * te)
+{
+	int i, j;
+
+	i = 0;
+	for (j = 0; j<targetCenter->link.size(); j++)
+	{
+		//中心te为起点，第j个邻域基元tte为终点，
+		LinkData * cn = targetCenter->link.at(j);
+		TextureElement * tte = cn->linkElement;
+		Line l1;
+		l1.startElement = targetCenter;
+		l1.endElement = tte;
+		l1.start = targetCenter->pos;
+		l1.end = tte->pos;
+		//与所有line求交点
+		for (i = 0; i<m_targetTexture->lines.size(); i++)
+		{
+			if (l1.isCross(m_targetTexture->lines.at(i)))
+			{
+				bool deleteConnection = true;
+				Line l2 = m_targetTexture->lines.at(i);
+				for (int k = 0; k<targetCenter->link.size(); k++)
+				{
+					LinkData * cnk = targetCenter->link.at(k);
+					TextureElement * ttek = cn->linkElement;
+					if (l2.isContains(ttek))
+					{
+						deleteConnection = false;
+						break;
+					}
+
+				}
+				if (deleteConnection)
+				{
+					//若存在交叉，则对应基元不再扩张。
+					tte->isfixed = true;
+				/*	bool isFixed = true;
+					for (vector<TextureElement *>::iterator it = m_targetTexture->recentlyAdd.begin(); it != m_targetTexture->recentlyAdd.end();)   //for循环中不要it++
+					{
+						if (*it == tte)
+						{
+							isFixed = false;//新加入的
+						}
+						it++;
+
+					}
+
+					if (isFixed)
+					{
+						m_targetTexture->deleteConnectRation(tte->index, targetCenter->index);
+						m_targetTexture->deleteLines(tte, targetCenter);
+					}
+					else
+					{
+						m_targetTexture->deleteNode(tte->index);
+					}
+				
+					detectCross1();
+					return;*/
+				}
+			}
+		}
+
+		/*m_targetTexture->addLines(l1);*/
+	}
+	return;
 }

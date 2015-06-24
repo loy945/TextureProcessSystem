@@ -105,7 +105,7 @@ bool SampleTexture::addLink(TextureElement* te1,TextureElement * te2)
 	
 	double dx=te2->pos[0]-te1->pos[0];
 	double dy=te2->pos[1]-te1->pos[1];
-	//double dz=te2->centre->z-te1->centre->z;
+	//double dz=te2->pos->z-te1->pos->z;
 	//只考虑2D情况 计算长度 和象限 
 	double dis1=sqrt(dx*dx+dy*dy);
 	double dis2=sqrt(dx*dx+dy*dy);
