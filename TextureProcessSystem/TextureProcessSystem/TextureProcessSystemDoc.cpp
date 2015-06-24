@@ -2108,12 +2108,12 @@ void CTextureProcessSystemDoc::buildTexCoordByIndex(int index, int maxDeep, int 
 	double strech = 999;
 	double area = 0;
 	float scale = 1;
-	while (strech>1)
+	while (strech>0.5)
 	{
 		v.clear();
 		buildTexCoord(index, v, deep, maxDeep, maxNum, radius);
 		area=getSelectArea(v);
-		scale = area*0.008;
+		scale = area*40000;
 		strech = lp.localPara(&plyLoader, v, index, offsetPT, 0.125);
 		maxNum++;
 	}

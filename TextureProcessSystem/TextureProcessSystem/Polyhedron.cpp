@@ -7,6 +7,7 @@
 #include "TriangleRectCross.h"
 #include "TriangleCoorTrans.h"
 #include <fstream>
+#include "Triangle.h"
 using namespace std;
 Polyhedron::Polyhedron(){
 	// Default setting
@@ -2262,16 +2263,28 @@ void Polyhedron::getRect(Point3D * rect[2])
 		tri[i] = new Point3D(this->pU[this->Face[m_indexCenterInPara][i]],this->pV[this->Face[m_indexCenterInPara][i]], 0);
 	}
 	Point3D * centerPoint = getPos(tri, m_2DOffset);
-	/*//暂时用三角形重心代替，等坐标转换误差消除后再恢复
-	centerPoint->x = (pU[Face[m_indexCenterInPara][0]] + pU[Face[m_indexCenterInPara][1]] + pU[Face[m_indexCenterInPara][2]]) / 3.0;
-	centerPoint->y = (pV[Face[m_indexCenterInPara][0]] + pV[Face[m_indexCenterInPara][1]] + pV[Face[m_indexCenterInPara][2]]) / 3.0;
+	//这里矩形的边长 由缩放比例m_scale和中心三角形展开前面积SP与展开后面积SA 共同确定
+	/*float sp = centerFaceArea;
+	Triangle t;
+	for (int i = 0; i < 3; i++)
+	{
+		t.pt[i].x = tri[i]->x;
+		t.pt[i].y = tri[i]->y;
+		t.pt[i].z = tri[i]->z;
+	}
+	float sa = t.getArea();
 	*/
+
+	//float sa = areaMap3D[0];
+	len = m_scale;//常数项2,确定后作为参数传入，先不管
+		
+
 	/*rect[0] = &(*centerPoint + Point3D(-m_scale / 2, -m_scale / 2, 0));
 	rect[1] = &(*centerPoint + Point3D(-m_scale / 2,  m_scale / 2, 0));
 	rect[2] = &(*centerPoint + Point3D( m_scale / 2,  m_scale / 2, 0));
 	rect[3] = &(*centerPoint + Point3D( m_scale / 2, -m_scale / 2, 0));*/
- 	rect[0]->setValue(*centerPoint + Point3D(-m_scale / 2, -m_scale / 2, 0));
-	rect[1]->setValue(*centerPoint + Point3D(m_scale / 2, m_scale / 2, 0));
+	rect[0]->setValue(*centerPoint + Point3D(-len /2, -len / 2, 0));
+	rect[1]->setValue(*centerPoint + Point3D(len / 2, len / 2, 0));
 
 	//记录rect
 	fstream file;
@@ -2326,13 +2339,14 @@ void Polyhedron::mark()
 	rect[0] = new Point3D();
 	rect[1] = new Point3D();
 
+
+	getRect(rect);
 	for (int i = 0; i < this->numberF; i++)
-	{
+	{		
 		for (int j = 0; j < 3; j++)
 		{
-			tri[j]->setValue(this->pU[this->Face[i][j]], this->pV[this->Face[i][j]],0);
+			tri[j]->setValue(this->pU[this->Face[i][j]], this->pV[this->Face[i][j]], 0);
 		}
-		getRect(rect);
 		if (trc.isCrossed(tri, rect))
 		{
 			faceEffect[i] = true;

@@ -1,6 +1,7 @@
 #pragma once
 #include "TextureElement.h"
 #include "IndexPair.h"
+#include "Line.h"
 class Texture
 {
 public:
@@ -19,6 +20,6 @@ public:
 	TextureElement * findOptimalMatchTextureElement(TextureElement *te,vector<int> &addList);
 	double differentBetweenTwoTextureElement(TextureElement *te1,TextureElement *te2,vector<int>&addList);
 	void addTEbyCenterTE(TextureElement * centerTE);
-	
+	vector<Line> lines;
 };
 

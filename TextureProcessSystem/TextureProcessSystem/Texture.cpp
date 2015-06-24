@@ -105,6 +105,10 @@ double Texture::getError(LinkData *  link1,LinkData * link2)
 	l=abs(len1-len2);
 	//xita
 	xita=abs(angle1-angle2);
+	if (xita > 180)
+	{
+		xita = 360 - xita;
+	}
 
 	//return w1*q+w2*xita+w3*l+w4*cid+w5*subid;
 	//returnError=w2*xita+w3*l+w4*cid+w5*subid;
@@ -157,9 +161,13 @@ double Texture::differentBetweenTwoTextureElement(TextureElement *te1,TextureEle
 	}
 	for (i = 0; i<size1; i++)
 	{
-		tempError = 0;
+		tempError = 99;
 		tempMinError = 999;
 		minJ = 0;
+		if (!te1->link[i]->linkElement->isShow)
+		{
+			continue;
+		}
 		for (j = 0; j<size2; j++)
 		{
 			////如果te2中的第j个元素,已经有匹配了的元素了，则不参加匹配

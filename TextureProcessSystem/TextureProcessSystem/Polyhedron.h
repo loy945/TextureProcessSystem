@@ -157,4 +157,6 @@ public:
 	float m_scale;
 	Point3D * m_2DOffset;
 	Point3D * m_centerPos;
+	double centerFaceArea;
+	double len;//最终缩放程度
 };

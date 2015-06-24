@@ -11,6 +11,7 @@
 #include"Polyhedron.h"
 #include"Parameterization.h"
 #include "TriangleCoorTrans.h"
+#include"Triangle.h"
 #include <fstream>
 using namespace std;
 LocalParameterization::LocalParameterization()
@@ -131,11 +132,17 @@ void LocalParameterization::init(Model_PLY * ply, vector<int> faceIndexs)
 	for (i = 0; i<mymesh->numberF; i++)
 		fprintf(out, "3 %d %d %d\n", mymesh->Face[i][0], mymesh->Face[i][1], mymesh->Face[i][2]);
 	fclose(out);
-
 	/* feature analysis */
 	mymesh->SetBoundaryLines();
 	mymesh->setAreaMap3D();
-
+	Triangle t;
+	for (int i = 0; i < 3; i++)
+	{
+		t.pt[i].x = ply->pointArry[ply->faceArry[faceIndexs[0]].ptnum[i]].x;
+		t.pt[i].y = ply->pointArry[ply->faceArry[faceIndexs[0]].ptnum[i]].y;
+		t.pt[i].z = ply->pointArry[ply->faceArry[faceIndexs[0]].ptnum[i]].z;
+	}
+	mymesh->centerFaceArea=t.getArea();
 	return;
 }
 void LocalParameterization::face_Parameterization(Model_PLY * ply, vector<int> faceIndexs)

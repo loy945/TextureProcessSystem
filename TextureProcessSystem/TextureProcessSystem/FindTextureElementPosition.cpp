@@ -72,7 +72,7 @@ void FindTextureElementPosition::init(CTextureProcessSystemDoc * pDoc)
 		m_targetTexture->addLink(targetCenter,tex);
 	}
 	//补全连通信息
-	addlinks(targetCenter);
+	//addlinks(targetCenter);
 
 	//统计个数
 	int w=0;
@@ -109,7 +109,7 @@ void FindTextureElementPosition::getPoint(double dis, double angel, TextureEleme
 }
 double FindTextureElementPosition::getPointError(double dis, double angel, TextureElement * centerTE, Point3D p)
 {
-	double k1 = 100;
+	double k1 = 50;
 	double k2 = 1;
 	double distanceError;
 	float pos[3];
@@ -322,11 +322,33 @@ void FindTextureElementPosition::draw()
 	}
 
 	glEnd(); // 四边形绘制结束
+	//画线
+	glColor3f(1, 1, 1);
+	glBegin(GL_LINES);
+	for (i = 0; i < m_targetTexture->lines.size(); i++)
+	{
+		if (m_targetTexture->lines[i].startElement->isShow&&m_targetTexture->lines[i].endElement->isShow)
+		{
+		glVertex3f(m_targetTexture->lines[i].start.x, m_targetTexture->lines[i].start.y, m_targetTexture->lines[i].start.z);
+		glVertex3f(m_targetTexture->lines[i].end.x, m_targetTexture->lines[i].end.y, m_targetTexture->lines[i].end.z);
+		}
+	}
+	glEnd();
 	glFlush();//立即渲染
+}
+void FindTextureElementPosition::amendTargetTE(TextureElement * te)
+{
+	for (int i = 0; i < te->link.size(); i++)
+	{
+		te->link[i]->angle = te->getAngleFrom(te->link[i]->linkElement->pos);
+		te->link[i]->distance = te->getDisFrom(te->link[i]->linkElement->pos);
+	}
 }
 void FindTextureElementPosition::buildTargetTextureElement(TextureElement * centerTE)
 {
 	targetCenter = centerTE;
+	//修正当前基元的link数据
+	amendTargetTE(centerTE);
 	latestAddIn.clear();
 	vector<int> matchF;
 	gl_face * theFace;
@@ -336,7 +358,7 @@ void FindTextureElementPosition::buildTargetTextureElement(TextureElement * cent
 	//顶点候选集
 	P.clear();
 	pDoc->userSelectingTriangleIndex = centerTE->face->facenum;
-	P = addPointToSelectList(pDoc->markConnectedFace(0, 0, 50));
+	P = addPointToSelectList(pDoc->markConnectedFace(0, 0, radius));
 	//开始添加
 	for (int i = 0; i < matchF.size(); i++)
 	{
@@ -350,7 +372,11 @@ void FindTextureElementPosition::buildTargetTextureElement(TextureElement * cent
 		m_targetTexture->addLink(targetCenter, tex);
 		latestAddIn.push_back(tex->index);
 	}
-
+	if (centerTE->link.size() < 6)
+	{
+		int breakPoint = 0;
+	}
+	
 }
 void FindTextureElementPosition::addlinks(TextureElement * centerTE)
 {
@@ -363,7 +389,11 @@ void FindTextureElementPosition::addlinks(TextureElement * centerTE)
 		{
 			j = 0;
 		}
-		m_targetTexture->addLink(centerTE->link[i]->linkElement, centerTE->link[j]->linkElement);
+		if (centerTE->link[i]->linkElement->isShow&&centerTE->link[j]->linkElement->isShow)
+		{
+			m_targetTexture->addLink(centerTE->link[i]->linkElement, centerTE->link[j]->linkElement);
+		}
+		
 	}
 	centerTE->isfixed = true;
 }
@@ -389,13 +419,14 @@ TextureElement * FindTextureElementPosition::theNearsetTE()
 	}
 	return res;
 }
+
 void FindTextureElementPosition::buildByStep()
 {
 	TextureElement * nexte = theNearsetTE();
 	buildTargetTextureElement(nexte);
 	nexte->textureElementSort();
-	addlinks(targetCenter);
-	amend();
+	//amend();
+	addlinks(targetCenter);	
 	m_targetTexture->textureSort();
 }
 void FindTextureElementPosition::amend()

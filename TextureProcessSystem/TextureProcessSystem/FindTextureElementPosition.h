@@ -19,6 +19,8 @@ public:
 	TextureElement * theNearsetTE();
 	void buildByStep();
 	void amend();
+	void amendTargetTE(TextureElement * te);//修正当前基元的link数据
+
 public:
 	SampleTexture * m_sampleTexture;
 	TargetTexture * m_targetTexture;

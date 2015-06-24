@@ -308,13 +308,13 @@ void CTextureProcessSystemApp::Check()
 		pDoc->offsetPT->x = temp->x;
 		pDoc->offsetPT->y = temp->y;
 
-		pDoc->buildTexCoordByIndex(faceNum, 50, 150, 0.04);
+		pDoc->buildTexCoordByIndex(faceNum, 50, 50, 0.04);
 	}
 	f.close();
 	
-	/*//1585测试用例
-	pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);
-	*/
+	//1585测试用例
+	//pDoc->buildTexCoordByIndex(1585, 50, 50, 0.04);	
+	
 	/*//计算基元在中心面片的相对位置
 	Point3D pt1;//第i个基元的位置
 	pt1.x = pDoc->plyLoader.faceArry[1585].corex;
