@@ -355,7 +355,7 @@ void FindTextureElementPosition::amendTargetTE(TextureElement * te)
 		te->link[i]->distance = te->getDisFrom(te->link[i]->linkElement->pos);
 	}
 }
-void FindTextureElementPosition::buildTargetTextureElement(TextureElement * centerTE, vector<int> matchF,vector<vector<int> >  &linkPairs)
+void FindTextureElementPosition::buildTargetTextureElement(TextureElement * centerTE, vector<int> &matchF,vector<vector<int> >  &linkPairs)
 {
 	targetCenter = centerTE;
 	//修正当前基元的link数据
@@ -391,7 +391,7 @@ void FindTextureElementPosition::buildTargetTextureElement(TextureElement * cent
 	}
 	
 }
-void FindTextureElementPosition::addlinks(TextureElement * centerTE, vector<int> matchF,vector<vector<int> >  &linkPairs)
+void FindTextureElementPosition::addlinks(TextureElement * centerTE, vector<int> &matchF,vector<vector<int> >  &linkPairs)
 {
 	int i = 0, j = 0,k = 0;
 	/*for (i = 0; i < centerTE->link.size(); i++)
@@ -412,27 +412,22 @@ void FindTextureElementPosition::addlinks(TextureElement * centerTE, vector<int>
 	int aindex = 0;
 	for (i = 0; i < matchF.size(); i++)
 	{
-		j = i - 1;
+		j = matchF[i] - 1;
 		if (j < 0)
 		{
-			j = matchF.size() - 1;
+			j = linkPairs.size() - 1;
 		}
-		k = i + 1;
-		if (k>matchF.size() - 1)
+		k = matchF[i] + 1;
+		if (k>linkPairs.size() - 1)
 		{
 			k = 0;
 		}
-		//逻辑有点小问题20150624
 		VectorIndexPair(linkPairs, matchF[i], 2, index);
-		VectorIndexPair(linkPairs, matchF[j], 2, pindex);
-		VectorIndexPair(linkPairs, matchF[k], 2, aindex);
-		//if (centerTE->link[index]->linkElement->isShow&&centerTE->link[pindex]->linkElement->isShow&&centerTE->link[aindex]->linkElement->isShow)
-		//{
+		VectorIndexPair(linkPairs, j, 2, pindex);
+		VectorIndexPair(linkPairs, k, 2, aindex);
 
-  			m_targetTexture->addLink(centerTE->link[index]->linkElement, centerTE->link[pindex]->linkElement);
-			m_targetTexture->addLink(centerTE->link[index]->linkElement, centerTE->link[aindex]->linkElement);
-		//}
-
+ 		m_targetTexture->addLink(m_targetTexture->tes[index], m_targetTexture->tes[pindex]);
+		m_targetTexture->addLink(m_targetTexture->tes[index], m_targetTexture->tes[aindex]);
 
 	}
 	centerTE->isfixed = true;
@@ -466,7 +461,7 @@ void FindTextureElementPosition::buildByStep()
 	vector<int> matchF;
 	vector<vector<int> >  linkPairs;
 	buildTargetTextureElement(nexte, matchF, linkPairs);
-	nexte->textureElementSort();
+	//nexte->textureElementSort();
 	//amend();
 	addlinks(targetCenter, matchF, linkPairs);
 	m_targetTexture->textureSort();

@@ -214,7 +214,7 @@ double Texture::differentBetweenTwoTextureElement(TextureElement *te1, TextureEl
 		matchIndexs.push_back(ip);
 		vector<int> linkPair;
 		linkPair.push_back(minJ);
-		linkPair.push_back(te2->link.at(minJ)->linkElement->index);//(À≥–Ú∫≈,∂‘”¶∂•µ„∫≈)
+		linkPair.push_back(te1->link[i]->index);//(À≥–Ú∫≈,∂‘”¶∂•µ„∫≈)
 		linkPairs.push_back(linkPair); 
 		error += tempMinError;
 	}
