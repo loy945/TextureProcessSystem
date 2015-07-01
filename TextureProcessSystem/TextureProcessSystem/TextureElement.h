@@ -40,7 +40,7 @@ public:
 	double getDisFrom(float * position);
 	double getAngleFrom(float * position);
 	double getAngleFrom(float * position, float * n1);
-
+	void VectorProjection(float *n, float *v, float res[3]);
 	double vecTimes(float * n1,float * n2)//œÚ¡øµ„≥À
 	{
 		double sun=0;

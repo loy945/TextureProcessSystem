@@ -126,6 +126,33 @@ double TextureElement::getDisFrom(float * position)
 	float dis = sqrt(sun);
 	return dis;
 }
+void TextureElement::VectorProjection(float *n, float *v, float res[3])
+{
+	//nÊÇÆ½Ãæ·¨ÏòÁ¿£¬vÊÇÒªÍ¶Ó°µÄÏòÁ¿
+	int i, j;
+	double NN[3][3], norm2, t;
+	norm2 = n[0] * n[0] + n[1] * n[1] + n[2] * n[2];
+	for (i = 0; i<3; i++)
+	{
+		for (j = 0; j<3; j++)
+		{
+			NN[i][j] = -n[i] * n[j];
+			if (i == j)
+			{
+				NN[i][j] += norm2;
+			}
+		}
+	}
+	for (i = 0; i<3; i++)
+	{
+		t = 0;
+		for (j = 0; j<3; j++)
+		{
+			t += v[j] * NN[i][j];
+		}
+		res[i] = t / norm2;
+	}
+}
 
 double  TextureElement::getAngleFrom(float * position,float * n1)//positionÆ½ÃæÍâÒ»µã ÒªÍ¶Ó°µ½Æ½ÃæÉÏ,n1ÊÇÆä·¨ÏòÁ¿
 {
@@ -188,33 +215,22 @@ double  TextureElement::getAngleFrom(float * position,float * n1)//positionÆ½ÃæÍ
 
 double  TextureElement::getAngleFrom(float * position)//positionÆ½ÃæÍâÒ»µã ÒªÍ¶Ó°µ½Æ½ÃæÉÏ
 {
-	//¿Õ¼äÒ»µãposition Í¶Ó°±ä³Éres
-	float res[3];
-	projection(n,position,pos,res);
-	//¿Õ¼äÒ»µãe000(0,0,0) Í¶Ó°³ÉO
-	float e000[3]; e000[0]=0;e000[1]=0;e000[2]=0;
-	float O[3];
-	projection(n,e000,pos,O);
-	//¿Õ¼äÒ»µãe100(1,0,0) Í¶Ó°³ÉB
-	float e100[3]; e100[0]=1;e100[1]=0;e100[2]=0;
-	float B[3];
-	projection(n,e100,pos,B);
-
-	//ÏòÁ¿OB
-	float OB[3];
-	Vector3f vOB(3);
-	for(int i=0;i<3;i++)
+	//¿Õ¼äÏòÁ¿e(1,0,0) Í¶Ó°³ÉvB
+	float e[3] = { 1, 0, 0 };
+	float vB[3];
+	VectorProjection(n, e, vB);
+	//ÏòÁ¿PPÍ¶Ó°³ÉPPpro
+	float PP[3], PPpro[3];
+	Vector3f vOB, vP;
+	for (int i = 0; i<3; i++)
 	{
-		OB[i]=B[i]-O[i];
-		vOB[i]=OB[i];
+		PP[i] = position[i] - pos[i];
 	}
-	//ÏòÁ¿PP
-	float  PP[3];
-	Vector3f vP(3);
-	for(int i=0;i<3;i++)
+	VectorProjection(n, PP, PPpro);
+	for (int i = 0; i<3; i++)
 	{
-		PP[i] = res[i] - pos[i];
-		vP[i] = PP[i];
+		vP[i] = PPpro[i];
+		vOB[i] = vB[i];
 	}
 	///ÇóÏòÁ¿¼Ğ½Ç
 	float value = 0;
