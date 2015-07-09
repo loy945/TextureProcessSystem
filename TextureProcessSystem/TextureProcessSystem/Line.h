@@ -1,6 +1,11 @@
 #pragma once
 #include "Point3D.h"
 #include "TextureElement.h"
+#include <Eigen/Dense>  
+#include <Eigen/LU>
+using namespace Eigen;
+using namespace Eigen::internal;
+using namespace Eigen::Architecture;
 class Line
 {
 public:
@@ -19,6 +24,8 @@ public:
 	bool operator == (Line l);
 	bool isContains(Point3D point);
 	bool isContains(TextureElement * te);
+	bool isCross(Vector3f x1, Vector3f x2, Vector3f y1, Vector3f y2);
+	bool isCrossAtBE(Vector3f x1, Vector3f x2, Vector3f y1, Vector3f y2);
 
 };
 

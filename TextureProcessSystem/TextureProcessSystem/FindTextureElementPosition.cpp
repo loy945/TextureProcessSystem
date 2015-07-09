@@ -428,9 +428,22 @@ void FindTextureElementPosition::addlinks(TextureElement * centerTE, vector<int>
 
  		m_targetTexture->addLink(m_targetTexture->tes[index], m_targetTexture->tes[pindex]);
 		m_targetTexture->addLink(m_targetTexture->tes[index], m_targetTexture->tes[aindex]);
-
+		Line l1;
+		l1.startElement = m_targetTexture->tes[index];
+		l1.endElement = m_targetTexture->tes[pindex];
+		l1.start = m_targetTexture->tes[index]->pos;
+		l1.end = m_targetTexture->tes[pindex]->pos;
+		Line l2;
+		l2.startElement = m_targetTexture->tes[index];
+		l2.endElement = m_targetTexture->tes[aindex];
+		l2.start = m_targetTexture->tes[index]->pos;
+		l2.end = m_targetTexture->tes[aindex]->pos;
+		
+		m_targetTexture->lines.push_back(l1);
+		m_targetTexture->lines.push_back(l2);
 	}
 	centerTE->isfixed = true;
+
 }
 TextureElement * FindTextureElementPosition::theNearsetTE()
 {
@@ -464,6 +477,7 @@ void FindTextureElementPosition::buildByStep()
 	//nexte->textureElementSort();
 	//amend();
 	addlinks(targetCenter, matchF, linkPairs);
+	detectCross1(targetCenter);
 	m_targetTexture->textureSort();
 }
 void FindTextureElementPosition::amend()
@@ -511,24 +525,24 @@ void FindTextureElementPosition::detectCross1(TextureElement * te)
 		l1.endElement = tte;
 		l1.start = targetCenter->pos;
 		l1.end = tte->pos;
+		//bool addLines = true;
 		//与所有line求交点
 		for (i = 0; i<m_targetTexture->lines.size(); i++)
 		{
 			if (l1.isCross(m_targetTexture->lines.at(i)))
 			{
 				bool deleteConnection = true;
-				Line l2 = m_targetTexture->lines.at(i);
+			/*	Line l2 = m_targetTexture->lines.at(i);
 				for (int k = 0; k<targetCenter->link.size(); k++)
 				{
 					LinkData * cnk = targetCenter->link.at(k);
 					TextureElement * ttek = cn->linkElement;
-					if (l2.isContains(ttek))
+					if (l2.isContains(ttek) || l2.isContains(targetCenter))
 					{
 						deleteConnection = false;
 						break;
 					}
-
-				}
+				}*/
 				if (deleteConnection)
 				{
 					//若存在交叉，则对应基元不再扩张。
@@ -559,8 +573,11 @@ void FindTextureElementPosition::detectCross1(TextureElement * te)
 				}
 			}
 		}
-
-		/*m_targetTexture->addLines(l1);*/
+		/*if (addLines)
+		{
+			m_targetTexture->lines.push_back(l1);
+		}*/
+		
 	}
 	return;
 }
